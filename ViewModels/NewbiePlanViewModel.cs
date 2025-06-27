@@ -16,59 +16,50 @@ namespace Run.ViewModels
         private string _activityLevel;
         private string _daysPerWeek;
         private string _runStyle;
-        //private string _crossTrainingPreference;
         private string _planSummary;
+        private List<string> generatedPlanLines = new();
 
         public ObservableCollection<string> Goals { get; set; }
         public ObservableCollection<string> ActivityLevels { get; set; }
         public ObservableCollection<string> DaysPerWeekOptions { get; set; }
         public ObservableCollection<string> RunStyles { get; set; }
-        //  public ObservableCollection<string> CrossTrainingPreferences { get; set; }
+
         public string Goal
         {
             get => _goal;
             set => SetProperty(ref _goal, value);
         }
+
         public string ActivityLevel
         {
             get => _activityLevel;
             set => SetProperty(ref _activityLevel, value);
         }
+
         public string DaysPerWeek
         {
             get => _daysPerWeek;
             set => SetProperty(ref _daysPerWeek, value);
         }
+
         public string RunStyle
         {
             get => _runStyle;
             set => SetProperty(ref _runStyle, value);
         }
-        /*        public string CrossTrainingPreference
-                {
-                    get => _crossTrainingPreference;
-                    set => SetProperty(ref _crossTrainingPreference, value);
-                }*/
+
         private string weight;
         public string Weight
         {
             get => weight;
-            set
-            {
-                weight = value;
-                OnPropertyChanged(nameof(Weight));
-            }
+            set => SetProperty(ref weight, value);
         }
 
         private string height;
         public string Height
         {
             get => height;
-            set
-            {
-                height = value;
-                OnPropertyChanged(nameof(Height));
-            }
+            set => SetProperty(ref height, value);
         }
 
         public string PlanSummary
@@ -77,7 +68,8 @@ namespace Run.ViewModels
             set => SetProperty(ref _planSummary, value);
         }
 
-        public ICommand GeneratePlanCommand { get; }
+        public ICommand LoadPlanCommand { get; }
+        public ICommand ExportToPdfCommand { get; }
 
         public NewbiePlanViewModel()
         {
@@ -85,12 +77,12 @@ namespace Run.ViewModels
             ActivityLevels = new ObservableCollection<string> { "Sedentary", "Lightly Active", "Moderately Active", "Very Active" };
             DaysPerWeekOptions = new ObservableCollection<string> { "3 days", "4 days", "5 days" };
             RunStyles = new ObservableCollection<string> { "Long Runs", "Interval Training", "Hill Workouts" };
-            // CrossTrainingPreferences = new ObservableCollection<string> { "Yoga/Pilates", "Cycling/Swimming", "Strength Training" };
 
-            GeneratePlanCommand = new Command(GeneratePlan);
+            LoadPlanCommand = new Command(LoadPlan);
+            ExportToPdfCommand = new Command(ExportToPdf);
         }
 
-        private async void GeneratePlan()
+        public void LoadPlan()
         {
             string bmiNote = string.Empty;
             double bmi = 0;
@@ -108,11 +100,11 @@ namespace Run.ViewModels
                     _ => "Obese"
                 };
 
-                bmiNote = $"📊 BMI: {Math.Round(bmi, 1)} ({bmiCategory})";
+                bmiNote = $"\ud83d\udcca BMI: {Math.Round(bmi, 1)} ({bmiCategory})";
             }
             else
             {
-                bmiNote = "📊 BMI: Not available (invalid height/weight)";
+                bmiNote = "\ud83d\udcca BMI: Not available (invalid height/weight)";
             }
 
             int days = DaysPerWeek.StartsWith("3") ? 3 :
@@ -138,7 +130,6 @@ namespace Run.ViewModels
                             (_, 5) => $"Day {day}: Long slow jog {30 + week * 5} min",
                             _ => ""
                         },
-
                         "Endurance" => (week, day) switch
                         {
                             (_, 1) => $"Day {day}: Steady run - {30 + week * 5} min",
@@ -148,7 +139,6 @@ namespace Run.ViewModels
                             (_, 5) => $"Day {day}: Long run {50 + week * 5} min",
                             _ => ""
                         },
-
                         "Speed" => (week, day) switch
                         {
                             (_, 1) => $"Day {day}: Hill sprints x {4 + week} + Jog",
@@ -158,7 +148,6 @@ namespace Run.ViewModels
                             (_, 5) => $"Day {day}: Short time trial (1-3K)",
                             _ => ""
                         },
-
                         _ => (week, day) switch
                         {
                             (_, 1) => $"Day {day}: Easy run {20 + week * 2} min",
@@ -176,13 +165,21 @@ namespace Run.ViewModels
                 planLines.Add("");
             }
 
-            PlanSummary = $"🎯 Goal: {Goal}\n" +
-                          $"⚡ Activity Level: {ActivityLevel}\n" +
-                          $"📅 Days per Week: {DaysPerWeek}\n" +
-                          $"🏃‍♂️ Run Style: {RunStyle}\n" +
-                          $"📊 Weight: {Weight} kg | Height: {Height} cm\n" +
+            PlanSummary = $"\ud83c\udf1f Goal: {Goal}\n" +
+                          $"\u26a1 Activity Level: {ActivityLevel}\n" +
+                          $"\ud83d\uddd5\ufe0f Days per Week: {DaysPerWeek}\n" +
+                          $"\ud83c\udfc3\u200d\u2642\ufe0f Run Style: {RunStyle}\n" +
+                          $"\ud83d\udcca Weight: {Weight} kg | Height: {Height} cm\n" +
                           $"{bmiNote}\n\n" +
-                          $"📋 4-Week Running Plan:\n\n{string.Join("\n", planLines)}";
+                          $"\ud83d\udccb 4-Week Running Plan:\n\n{string.Join("\n", planLines)}";
+
+            generatedPlanLines = planLines;
+        }
+
+        public async void ExportToPdf()
+        {
+            if (generatedPlanLines == null || generatedPlanLines.Count == 0)
+                return;
 
             var document = new PdfDocument();
             var frontPage = document.AddPage();
@@ -190,25 +187,25 @@ namespace Run.ViewModels
             var fontTitle = new XFont("Verdana", 18, XFontStyle.Bold);
             var fontBody = new XFont("Verdana", 12, XFontStyle.Regular);
 
-            gfx1.DrawString("🏃 Personalized Running Plan", fontTitle, XBrushes.DarkBlue,
+            gfx1.DrawString("\ud83c\udfc3 Personalized Running Plan", fontTitle, XBrushes.DarkBlue,
                 new XRect(0, 40, frontPage.Width, 40), XStringFormats.TopCenter);
 
             int top = 100;
             int spacing = 30;
-            gfx1.DrawString($"🎯 Goal: {Goal}", fontBody, XBrushes.Black, 40, top); top += spacing;
-            gfx1.DrawString($"⚡ Activity Level: {ActivityLevel}", fontBody, XBrushes.Black, 40, top); top += spacing;
-            gfx1.DrawString($"📅 Days per Week: {DaysPerWeek}", fontBody, XBrushes.Black, 40, top); top += spacing;
-            gfx1.DrawString($"🏃‍♂️ Run Style: {RunStyle}", fontBody, XBrushes.Black, 40, top); top += spacing;
-            gfx1.DrawString($"📊 Weight: {Weight} kg | Height: {Height} cm", fontBody, XBrushes.Black, 40, top); top += spacing;
-            gfx1.DrawString($"{bmiNote}", fontBody, XBrushes.Black, 40, top); top += spacing;
+            gfx1.DrawString($"\ud83c\udf1f Goal: {Goal}", fontBody, XBrushes.Black, 40, top); top += spacing;
+            gfx1.DrawString($"\u26a1 Activity Level: {ActivityLevel}", fontBody, XBrushes.Black, 40, top); top += spacing;
+            gfx1.DrawString($"\ud83d\uddd5\ufe0f Days per Week: {DaysPerWeek}", fontBody, XBrushes.Black, 40, top); top += spacing;
+            gfx1.DrawString($"\ud83c\udfc3\u200d\u2642\ufe0f Run Style: {RunStyle}", fontBody, XBrushes.Black, 40, top); top += spacing;
+            gfx1.DrawString($"\ud83d\udcca Weight: {Weight} kg | Height: {Height} cm", fontBody, XBrushes.Black, 40, top); top += spacing;
+            gfx1.DrawString(generatedPlanLines.FirstOrDefault(l => l.StartsWith("\ud83d\udcca")) ?? "", fontBody, XBrushes.Black, 40, top);
 
             var planPage = document.AddPage();
             var gfx2 = XGraphics.FromPdfPage(planPage);
-            gfx2.DrawString("📋 4-Week Plan", fontTitle, XBrushes.DarkGreen,
+            gfx2.DrawString("\ud83d\udccb 4-Week Plan", fontTitle, XBrushes.DarkGreen,
                 new XRect(0, 40, planPage.Width, 40), XStringFormats.TopCenter);
 
             int top2 = 100;
-            foreach (var line in planLines)
+            foreach (var line in generatedPlanLines)
             {
                 if (string.IsNullOrWhiteSpace(line))
                 {
@@ -223,18 +220,13 @@ namespace Run.ViewModels
             var fileName = $"NewbiePlan_{DateTime.Now:yyyyMMddHHmmss}.pdf";
             var filePath = Path.Combine(FileSystem.CacheDirectory, fileName);
             using (var stream = File.Create(filePath))
-            {
                 document.Save(stream);
-            }
 
             await Launcher.OpenAsync(new OpenFileRequest
             {
                 File = new ReadOnlyFile(filePath)
             });
-
-            // await Shell.Current.DisplayAlert("Plan Generated", $"PDF saved to:\n{filePath}", "OK");
         }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string propertyName = "")
@@ -246,6 +238,7 @@ namespace Run.ViewModels
             OnPropertyChanged(propertyName);
             return true;
         }
+
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

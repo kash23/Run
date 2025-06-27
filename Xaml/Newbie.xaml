@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Run.Newbie"
+             Title="Running Plan Generator"
+             BackgroundColor="White"
+             xmlns:vm="clr-namespace:Run.ViewModels">
+
+    <!-- Bind the view model to the page -->
+    <ContentPage.BindingContext>
+        <vm:NewbiePlanViewModel />
+    </ContentPage.BindingContext>
+
+    <ScrollView Padding="20">
+        <VerticalStackLayout Spacing="15">
+
+            <!-- Goal Picker -->
+            <Label Text="Select Your Goal" FontSize="18" />
+            <Picker ItemsSource="{Binding Goals}"
+                    SelectedItem="{Binding Goal}"
+                    Title="Choose Goal"
+                    HeightRequest="40"
+                    TextColor="Black"
+                    BackgroundColor="White" />
+
+            <!-- Activity Level Picker -->
+            <Label Text="Select Activity Level" FontSize="18" />
+            <Picker ItemsSource="{Binding ActivityLevels}"
+                    SelectedItem="{Binding ActivityLevel}"
+                    Title="Choose Activity Level"
+                    HeightRequest="40"
+                    TextColor="Black"
+                    BackgroundColor="White" />
+
+            <!-- Days per Week Picker -->
+            <Label Text="Select Days per Week" FontSize="18" />
+            <Picker ItemsSource="{Binding DaysPerWeekOptions}"
+                    SelectedItem="{Binding DaysPerWeek}"
+                    Title="Choose Days"
+                    HeightRequest="40"
+                    TextColor="Black"
+                    BackgroundColor="White" />
+
+            <!-- Run Style Picker -->
+            <Label Text="Select Your Run Style" FontSize="18" />
+            <Picker ItemsSource="{Binding RunStyles}"
+                    SelectedItem="{Binding RunStyle}"
+                    Title="Choose Run Style"
+                    HeightRequest="40"
+                    TextColor="Black"
+                    BackgroundColor="White" />
+
+            <!-- Weight Input -->
+            <Label Text="Enter Your Weight (kg)" FontSize="18" />
+            <Entry Text="{Binding Weight}"
+                   Placeholder="e.g., 70"
+                   Keyboard="Numeric"
+                   HeightRequest="40"
+                   BackgroundColor="White"
+                   TextColor="Black" />
+
+            <!-- Height Input -->
+            <Label Text="Enter Your Height (cm)" FontSize="18" />
+            <Entry Text="{Binding Height}"
+                   Placeholder="e.g., 175"
+                   Keyboard="Numeric"
+                   HeightRequest="40"
+                   BackgroundColor="White"
+                   TextColor="Black" />
+
+            <!-- Plan Summary -->
+            <Label Text="Plan Summary" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" />
+            <Label Text="{Binding PlanSummary}"
+                   FontSize="14"
+                   TextColor="Black"
+                   LineBreakMode="WordWrap" />
+
+            <!-- Generate Button -->
+            <Button Text="Generate Plan"
+                    Command="{Binding GeneratePlanCommand}"
+                    Clicked="OnViewPlanClicked"
+                    BackgroundColor="RoyalBlue"
+                    TextColor="White"
+                    HorizontalOptions="Center"
+                    Margin="0,20,0,0" />
+
+            <Button Text="Download Plan"
+                    Clicked="OnDownPlanClicked"
+                    BackgroundColor="RoyalBlue"
+                    TextColor="White"
+                    HorizontalOptions="Center"
+                    Margin="0,20,0,0" />
+
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
