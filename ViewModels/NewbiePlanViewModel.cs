@@ -1,0 +1,254 @@
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows.Input;
+using Microsoft.Maui.Storage;
+using PdfSharpCore.Drawing;
+using PdfSharpCore.Pdf;
+using System.IO;
+using System.Collections.Generic;
+
+namespace Run.ViewModels
+{
+    public class NewbiePlanViewModel : INotifyPropertyChanged
+    {
+        private string _goal;
+        private string _activityLevel;
+        private string _daysPerWeek;
+        private string _runStyle;
+        //private string _crossTrainingPreference;
+        private string _planSummary;
+
+        public ObservableCollection<string> Goals { get; set; }
+        public ObservableCollection<string> ActivityLevels { get; set; }
+        public ObservableCollection<string> DaysPerWeekOptions { get; set; }
+        public ObservableCollection<string> RunStyles { get; set; }
+        //  public ObservableCollection<string> CrossTrainingPreferences { get; set; }
+        public string Goal
+        {
+            get => _goal;
+            set => SetProperty(ref _goal, value);
+        }
+        public string ActivityLevel
+        {
+            get => _activityLevel;
+            set => SetProperty(ref _activityLevel, value);
+        }
+        public string DaysPerWeek
+        {
+            get => _daysPerWeek;
+            set => SetProperty(ref _daysPerWeek, value);
+        }
+        public string RunStyle
+        {
+            get => _runStyle;
+            set => SetProperty(ref _runStyle, value);
+        }
+        /*        public string CrossTrainingPreference
+                {
+                    get => _crossTrainingPreference;
+                    set => SetProperty(ref _crossTrainingPreference, value);
+                }*/
+        private string weight;
+        public string Weight
+        {
+            get => weight;
+            set
+            {
+                weight = value;
+                OnPropertyChanged(nameof(Weight));
+            }
+        }
+
+        private string height;
+        public string Height
+        {
+            get => height;
+            set
+            {
+                height = value;
+                OnPropertyChanged(nameof(Height));
+            }
+        }
+
+        public string PlanSummary
+        {
+            get => _planSummary;
+            set => SetProperty(ref _planSummary, value);
+        }
+
+        public ICommand GeneratePlanCommand { get; }
+
+        public NewbiePlanViewModel()
+        {
+            Goals = new ObservableCollection<string> { "Weight Loss", "Endurance", "Speed", "General Fitness" };
+            ActivityLevels = new ObservableCollection<string> { "Sedentary", "Lightly Active", "Moderately Active", "Very Active" };
+            DaysPerWeekOptions = new ObservableCollection<string> { "3 days", "4 days", "5 days" };
+            RunStyles = new ObservableCollection<string> { "Long Runs", "Interval Training", "Hill Workouts" };
+            // CrossTrainingPreferences = new ObservableCollection<string> { "Yoga/Pilates", "Cycling/Swimming", "Strength Training" };
+
+            GeneratePlanCommand = new Command(GeneratePlan);
+        }
+
+        private async void GeneratePlan()
+        {
+            string bmiNote = string.Empty;
+            double bmi = 0;
+
+            if (double.TryParse(Weight, out var w) && double.TryParse(Height, out var h))
+            {
+                var heightM = h / 100;
+                bmi = w / (heightM * heightM);
+
+                string bmiCategory = bmi switch
+                {
+                    < 18.5 => "Underweight",
+                    >= 18.5 and < 25 => "Normal weight",
+                    >= 25 and < 30 => "Overweight",
+                    _ => "Obese"
+                };
+
+                bmiNote = $"📊 BMI: {Math.Round(bmi, 1)} ({bmiCategory})";
+            }
+            else
+            {
+                bmiNote = "📊 BMI: Not available (invalid height/weight)";
+            }
+
+            int days = DaysPerWeek.StartsWith("3") ? 3 :
+                       DaysPerWeek.StartsWith("4") ? 4 :
+                       DaysPerWeek.StartsWith("5") ? 5 : 3;
+
+            List<string> planLines = new();
+
+            for (int week = 1; week <= 4; week++)
+            {
+                planLines.Add($"WEEK {week}");
+
+                for (int day = 1; day <= days; day++)
+                {
+                    string line = Goal switch
+                    {
+                        "Weight Loss" => (week, day) switch
+                        {
+                            (_, 1) => $"Day {day}: Run/walk - Run {1 + week} min / Walk 2 min x 4",
+                            (_, 2) => $"Day {day}: Bodyweight strength or yoga",
+                            (_, 3) => $"Day {day}: Long walk + core stretch",
+                            (_, 4) => $"Day {day}: Cross-training (bike/swim) or easy jog",
+                            (_, 5) => $"Day {day}: Long slow jog {30 + week * 5} min",
+                            _ => ""
+                        },
+
+                        "Endurance" => (week, day) switch
+                        {
+                            (_, 1) => $"Day {day}: Steady run - {30 + week * 5} min",
+                            (_, 2) => $"Day {day}: Recovery walk or swim",
+                            (_, 3) => $"Day {day}: Tempo run {15 + week * 2} min",
+                            (_, 4) => $"Day {day}: Core + mobility",
+                            (_, 5) => $"Day {day}: Long run {50 + week * 5} min",
+                            _ => ""
+                        },
+
+                        "Speed" => (week, day) switch
+                        {
+                            (_, 1) => $"Day {day}: Hill sprints x {4 + week} + Jog",
+                            (_, 2) => $"Day {day}: Easy jog + form drills",
+                            (_, 3) => $"Day {day}: Intervals 400m x {3 + week}",
+                            (_, 4) => $"Day {day}: Strength + flexibility",
+                            (_, 5) => $"Day {day}: Short time trial (1-3K)",
+                            _ => ""
+                        },
+
+                        _ => (week, day) switch
+                        {
+                            (_, 1) => $"Day {day}: Easy run {20 + week * 2} min",
+                            (_, 2) => $"Day {day}: Walk + stretching",
+                            (_, 3) => $"Day {day}: Run/walk combo",
+                            (_, 4) => $"Day {day}: Cross training or yoga",
+                            (_, 5) => $"Day {day}: Long jog + recovery",
+                            _ => ""
+                        }
+                    };
+
+                    planLines.Add(line);
+                }
+
+                planLines.Add("");
+            }
+
+            PlanSummary = $"🎯 Goal: {Goal}\n" +
+                          $"⚡ Activity Level: {ActivityLevel}\n" +
+                          $"📅 Days per Week: {DaysPerWeek}\n" +
+                          $"🏃‍♂️ Run Style: {RunStyle}\n" +
+                          $"📊 Weight: {Weight} kg | Height: {Height} cm\n" +
+                          $"{bmiNote}\n\n" +
+                          $"📋 4-Week Running Plan:\n\n{string.Join("\n", planLines)}";
+
+            var document = new PdfDocument();
+            var frontPage = document.AddPage();
+            var gfx1 = XGraphics.FromPdfPage(frontPage);
+            var fontTitle = new XFont("Verdana", 18, XFontStyle.Bold);
+            var fontBody = new XFont("Verdana", 12, XFontStyle.Regular);
+
+            gfx1.DrawString("🏃 Personalized Running Plan", fontTitle, XBrushes.DarkBlue,
+                new XRect(0, 40, frontPage.Width, 40), XStringFormats.TopCenter);
+
+            int top = 100;
+            int spacing = 30;
+            gfx1.DrawString($"🎯 Goal: {Goal}", fontBody, XBrushes.Black, 40, top); top += spacing;
+            gfx1.DrawString($"⚡ Activity Level: {ActivityLevel}", fontBody, XBrushes.Black, 40, top); top += spacing;
+            gfx1.DrawString($"📅 Days per Week: {DaysPerWeek}", fontBody, XBrushes.Black, 40, top); top += spacing;
+            gfx1.DrawString($"🏃‍♂️ Run Style: {RunStyle}", fontBody, XBrushes.Black, 40, top); top += spacing;
+            gfx1.DrawString($"📊 Weight: {Weight} kg | Height: {Height} cm", fontBody, XBrushes.Black, 40, top); top += spacing;
+            gfx1.DrawString($"{bmiNote}", fontBody, XBrushes.Black, 40, top); top += spacing;
+
+            var planPage = document.AddPage();
+            var gfx2 = XGraphics.FromPdfPage(planPage);
+            gfx2.DrawString("📋 4-Week Plan", fontTitle, XBrushes.DarkGreen,
+                new XRect(0, 40, planPage.Width, 40), XStringFormats.TopCenter);
+
+            int top2 = 100;
+            foreach (var line in planLines)
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    top2 += spacing / 2;
+                    continue;
+                }
+
+                gfx2.DrawString(line, fontBody, XBrushes.Black, 40, top2);
+                top2 += spacing;
+            }
+
+            var fileName = $"NewbiePlan_{DateTime.Now:yyyyMMddHHmmss}.pdf";
+            var filePath = Path.Combine(FileSystem.CacheDirectory, fileName);
+            using (var stream = File.Create(filePath))
+            {
+                document.Save(stream);
+            }
+
+            await Launcher.OpenAsync(new OpenFileRequest
+            {
+                File = new ReadOnlyFile(filePath)
+            });
+
+            // await Shell.Current.DisplayAlert("Plan Generated", $"PDF saved to:\n{filePath}", "OK");
+        }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string propertyName = "")
+        {
+            if (EqualityComparer<T>.Default.Equals(backingField, value))
+                return false;
+
+            backingField = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}
