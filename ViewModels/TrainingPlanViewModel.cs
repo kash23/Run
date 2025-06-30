@@ -63,7 +63,18 @@ namespace Run.ViewModels
                 OnPropertyChanged();
             }
         }
+        public ICommand ToggleExpandCommand { get; }
+        public TrainingPlanViewModel()
+        {
+            SelectedPlan = new TrainingPlan();
+            SelectedPlan.Weeks = new ObservableCollection<WeeklyPlan>();
 
+            ToggleExpandCommand = new Command<WeeklyPlan>((plan) =>
+            {
+                if (plan != null)
+                    plan.IsExpanded = !plan.IsExpanded;
+            });
+        }
         private void LoadPlan()
         {
             if (string.IsNullOrEmpty(SelectedDistance) || string.IsNullOrEmpty(SelectedLevel))
@@ -132,13 +143,13 @@ namespace Run.ViewModels
                     IsCompleted = false,
                     Workouts = new List<DailyWorkout>
                     {
-                        new DailyWorkout { Day = "Monday", WorkoutType = "Rest", Description = "Rest day", IsCompleted = false },
-                        new DailyWorkout { Day = "Tuesday", WorkoutType = "Run", Description = $"Run {progression} km", IsCompleted = false },
-                        new DailyWorkout { Day = "Wednesday", WorkoutType = "Cross Training", Description = "Optional bike/swim", IsCompleted = false },
-                        new DailyWorkout { Day = "Thursday", WorkoutType = "Tempo Run", Description = $"Tempo run {tempoKm} km", IsCompleted = false },
-                        new DailyWorkout { Day = "Friday", WorkoutType = "Rest", Description = "Rest or walk", IsCompleted = false },
-                        new DailyWorkout { Day = "Saturday", WorkoutType = "Long Run", Description = $"Long run {longRunKm} km", IsCompleted = false },
-                        new DailyWorkout { Day = "Sunday", WorkoutType = "Recovery Run", Description = $"Recovery run {recoveryKm} km", IsCompleted = false }
+                        new DailyWorkout { Day = "Monday :", WorkoutType = " Rest", Description = " Rest day", IsCompleted = false },
+                        new DailyWorkout { Day = "Tuesday :", WorkoutType = " Run", Description = $" Run {progression} km", IsCompleted = false },
+                        new DailyWorkout { Day = "Wednesday :", WorkoutType = " Cross Training", Description = " Optional bike/swim", IsCompleted = false },
+                        new DailyWorkout { Day = "Thursday :", WorkoutType = " Tempo Run", Description = $" Tempo run {tempoKm} km", IsCompleted = false },
+                        new DailyWorkout { Day = "Friday :", WorkoutType = " Rest", Description = " Rest or walk", IsCompleted = false },
+                        new DailyWorkout { Day = "Saturday :", WorkoutType = " Long Run", Description = $" Long run {longRunKm} km", IsCompleted = false },
+                        new DailyWorkout { Day = "Sunday :", WorkoutType = " Recovery Run", Description = $" Recovery run {recoveryKm} km", IsCompleted = false }
                     }
                 });
             }
@@ -175,6 +186,7 @@ namespace Run.ViewModels
                 },
                 _ => "Running training"
             };
+
 
             SelectedPlan = new TrainingPlan
             {
@@ -225,7 +237,7 @@ namespace Run.ViewModels
 
                 foreach (var workout in week.Workouts)
                 {
-                    gfx.DrawString($"• {workout.Day}: {workout.WorkoutType} - {workout.Description}", fontBody, XBrushes.Gray, new XPoint(60, y));
+                    gfx.DrawString($"• {workout.Day} {workout.WorkoutType} - {workout.Description}", fontBody, XBrushes.Gray, new XPoint(60, y));
                     y += 18;
                 }
 
@@ -247,7 +259,7 @@ namespace Run.ViewModels
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "") =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

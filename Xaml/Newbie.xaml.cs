@@ -18,7 +18,21 @@ namespace Run
                 BindingContext = viewModel;
 
         }
+        private void OnNumericEntryChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is Entry entry)
+            {
+                string newText = new string(e.NewTextValue
+                    .Where(char.IsDigit) 
+                    .ToArray());
 
+                if (newText.Length > 3)
+                    newText = newText.Substring(0, 3); // Max 3 digits
+
+                if (entry.Text != newText)
+                    entry.Text = newText;
+            }
+        }
         private async void OnViewPlanClicked(object sender, EventArgs e)
         {
             await Task.Run(() => viewModel.LoadPlan());

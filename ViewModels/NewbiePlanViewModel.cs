@@ -7,6 +7,7 @@ using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
 using System.IO;
 using System.Collections.Generic;
+using Run.Models;
 
 namespace Run.ViewModels
 {
@@ -17,7 +18,10 @@ namespace Run.ViewModels
         private string _daysPerWeek;
         private string _runStyle;
         private string _planSummary;
+        private string weight;
+        private string height;
         private List<string> generatedPlanLines = new();
+        public ObservableCollection<WeeklyPlan> WeeklyPlans { get; set; } = new();
 
         public ObservableCollection<string> Goals { get; set; }
         public ObservableCollection<string> ActivityLevels { get; set; }
@@ -48,14 +52,12 @@ namespace Run.ViewModels
             set => SetProperty(ref _runStyle, value);
         }
 
-        private string weight;
         public string Weight
         {
             get => weight;
             set => SetProperty(ref weight, value);
         }
 
-        private string height;
         public string Height
         {
             get => height;
@@ -80,6 +82,13 @@ namespace Run.ViewModels
 
             LoadPlanCommand = new Command(LoadPlan);
             ExportToPdfCommand = new Command(ExportToPdf);
+
+/*            WeeklyPlans = new ObservableCollection<WeeklyPlan>();
+            ToggleExpandCommand = new Command<WeeklyPlan>((plan) =>
+            {
+                if (plan != null)
+                    plan.IsExpanded = !plan.IsExpanded;
+            });*/
         }
 
         public void LoadPlan()
@@ -100,85 +109,105 @@ namespace Run.ViewModels
                     _ => "Obese"
                 };
 
-                bmiNote = $"\ud83d\udcca BMI: {Math.Round(bmi, 1)} ({bmiCategory})";
+                bmiNote = $"📊 BMI: {Math.Round(bmi, 1)} ({bmiCategory})";
             }
             else
             {
-                bmiNote = "\ud83d\udcca BMI: Not available (invalid height/weight)";
+                bmiNote = $"📊 BMI: Not available (invalid height/weight)";
             }
 
             int days = DaysPerWeek.StartsWith("3") ? 3 :
                        DaysPerWeek.StartsWith("4") ? 4 :
                        DaysPerWeek.StartsWith("5") ? 5 : 3;
 
-            List<string> planLines = new();
+            WeeklyPlans.Clear();
 
             for (int week = 1; week <= 4; week++)
             {
-                planLines.Add($"WEEK {week}");
+                var weekPlan = new WeeklyPlan
+                {
+                    WeekNumber = week,
+                    WeekTitle = $"WEEK {week}",
+                    Focus = Goal,
+                    Intensity = Goal == "Speed" ? "High" : Goal == "Endurance" ? "Medium" : "Low",
+                    Tips = Goal switch
+                    {
+                        "Weight Loss" => "Stay consistent and hydrate!",
+                        "Endurance" => "Focus on pacing and breathing.",
+                        "Speed" => "Prioritize recovery between efforts.",
+                        _ => "Listen to your body and rest if needed."
+                    },
+                    Workouts = new List<DailyWorkout>()
+                };
 
                 for (int day = 1; day <= days; day++)
                 {
-                    string line = Goal switch
+                    string desc = Goal switch
                     {
                         "Weight Loss" => (week, day) switch
                         {
-                            (_, 1) => $"Day {day}: Run/walk - Run {1 + week} min / Walk 2 min x 4",
-                            (_, 2) => $"Day {day}: Bodyweight strength or yoga",
-                            (_, 3) => $"Day {day}: Long walk + core stretch",
-                            (_, 4) => $"Day {day}: Cross-training (bike/swim) or easy jog",
-                            (_, 5) => $"Day {day}: Long slow jog {30 + week * 5} min",
+                            (_, 1) => $"Run/walk - Run {1 + week} min / Walk 2 min x 4",
+                            (_, 2) => "Bodyweight strength or yoga",
+                            (_, 3) => "Long walk + core stretch",
+                            (_, 4) => "Cross-training or easy jog",
+                            (_, 5) => $"Long slow jog {30 + week * 5} min",
                             _ => ""
                         },
                         "Endurance" => (week, day) switch
                         {
-                            (_, 1) => $"Day {day}: Steady run - {30 + week * 5} min",
-                            (_, 2) => $"Day {day}: Recovery walk or swim",
-                            (_, 3) => $"Day {day}: Tempo run {15 + week * 2} min",
-                            (_, 4) => $"Day {day}: Core + mobility",
-                            (_, 5) => $"Day {day}: Long run {50 + week * 5} min",
+                            (_, 1) => $"Steady run - {30 + week * 5} min",
+                            (_, 2) => "Recovery walk or swim",
+                            (_, 3) => $"Tempo run {15 + week * 2} min",
+                            (_, 4) => "Core + mobility",
+                            (_, 5) => $"Long run {50 + week * 5} min",
                             _ => ""
                         },
                         "Speed" => (week, day) switch
                         {
-                            (_, 1) => $"Day {day}: Hill sprints x {4 + week} + Jog",
-                            (_, 2) => $"Day {day}: Easy jog + form drills",
-                            (_, 3) => $"Day {day}: Intervals 400m x {3 + week}",
-                            (_, 4) => $"Day {day}: Strength + flexibility",
-                            (_, 5) => $"Day {day}: Short time trial (1-3K)",
+                            (_, 1) => $"Hill sprints x {4 + week} + Jog",
+                            (_, 2) => "Easy jog + form drills",
+                            (_, 3) => $"Intervals 400m x {3 + week}",
+                            (_, 4) => "Strength + flexibility",
+                            (_, 5) => "Short time trial (1-3K)",
                             _ => ""
                         },
                         _ => (week, day) switch
                         {
-                            (_, 1) => $"Day {day}: Easy run {20 + week * 2} min",
-                            (_, 2) => $"Day {day}: Walk + stretching",
-                            (_, 3) => $"Day {day}: Run/walk combo",
-                            (_, 4) => $"Day {day}: Cross training or yoga",
-                            (_, 5) => $"Day {day}: Long jog + recovery",
+                            (_, 1) => $"Easy run {20 + week * 2} min",
+                            (_, 2) => "Walk + stretching",
+                            (_, 3) => "Run/walk combo",
+                            (_, 4) => "Cross training or yoga",
+                            (_, 5) => "Long jog + recovery",
                             _ => ""
                         }
                     };
 
-                    planLines.Add(line);
+                    if (!string.IsNullOrWhiteSpace(desc))
+                    {
+                        weekPlan.Workouts.Add(new DailyWorkout
+                        {
+                            Day = $"Day {day}",
+                            WorkoutType = Goal,
+                            Description = desc,
+                            IsCompleted = false
+                        });
+                    }
                 }
 
-                planLines.Add("");
+                WeeklyPlans.Add(weekPlan);
             }
 
-            PlanSummary = $"\ud83c\udf1f Goal: {Goal}\n" +
-                          $"\u26a1 Activity Level: {ActivityLevel}\n" +
-                          $"\ud83d\uddd5\ufe0f Days per Week: {DaysPerWeek}\n" +
-                          $"\ud83c\udfc3\u200d\u2642\ufe0f Run Style: {RunStyle}\n" +
-                          $"\ud83d\udcca Weight: {Weight} kg | Height: {Height} cm\n" +
-                          $"{bmiNote}\n\n" +
-                          $"\ud83d\udccb 4-Week Running Plan:\n\n{string.Join("\n", planLines)}";
-
-            generatedPlanLines = planLines;
+            PlanSummary = $"🌟 Goal: {Goal}\n" +
+                          $"⚡ Activity Level: {ActivityLevel}\n" +
+                          $"🗓️ Days per Week: {DaysPerWeek}\n" +
+                          $"🏃‍♂️ Run Style: {RunStyle}\n" +
+                          $"📊 Weight: {Weight} kg | Height: {Height} cm\n" +
+                          $"{bmiNote}\n";
         }
 
         public async void ExportToPdf()
         {
-            if (generatedPlanLines == null || generatedPlanLines.Count == 0)
+            if (WeeklyPlans == null || WeeklyPlans.Count == 0)
                 return;
 
             var document = new PdfDocument();

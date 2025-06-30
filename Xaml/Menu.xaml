@@ -2,9 +2,60 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Run.Menu"
-             Title="">
-    <VerticalStackLayout>
-        <Button Text="➡ Newbie" Clicked="OnGoToPageAClicked" />
-        <Button Text="➡ Run Categories" Clicked="OnGoToPageBClicked" />
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="#FAFAFA">
+
+    <VerticalStackLayout Padding="30"
+                         Spacing="40"
+                         VerticalOptions="Center"
+                         HorizontalOptions="Center">
+
+        <!-- Logo / Title -->
+        <Label Text="🏃‍♂️ Run Planner"
+               FontSize="34"
+               FontAttributes="Bold"
+               TextColor="#111827"
+               HorizontalOptions="Center"
+               FontFamily="Arial" />
+
+        <!-- Newbie Button -->
+        <Frame CornerRadius="18"
+               HasShadow="True"
+               BackgroundColor="#4CAF50"
+               WidthRequest="260"
+               HeightRequest="58"
+               Padding="0">
+            <Button Text="🌱 Start as Newbie"
+                    Clicked="OnGoToPageAClicked"
+                    BackgroundColor="Transparent"
+                    TextColor="White"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    CornerRadius="18" />
+        </Frame>
+
+        <!-- Run Categories Button -->
+        <Frame CornerRadius="18"
+               HasShadow="True"
+               BackgroundColor="#3B82F6"
+               WidthRequest="260"
+               HeightRequest="58"
+               Padding="0">
+            <Button Text="📊 Run Categories"
+                    Clicked="OnGoToPageBClicked"
+                    BackgroundColor="Transparent"
+                    TextColor="White"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    CornerRadius="18" />
+        </Frame>
+
+        <!-- Footer / Tagline -->
+        <Label Text="Train smart. Run free. ✨"
+               FontSize="14"
+               TextColor="#6B7280"
+               HorizontalOptions="Center"
+               Margin="0,30,0,0" />
+
     </VerticalStackLayout>
 </ContentPage>
