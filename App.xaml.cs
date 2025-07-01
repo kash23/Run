@@ -6,7 +6,8 @@
         {
             InitializeComponent();
 
-            MainPage = new NavigationPage(new Menu());
+            MainPage = new NavigationPage(new Login());
+            //   101988493212
         }
     }
 }

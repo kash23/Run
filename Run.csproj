@@ -24,7 +24,7 @@
 		<ApplicationTitle>Run</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.run</ApplicationId>
+		<ApplicationId>com.ak.otpapp</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -66,10 +66,21 @@
 		<PackageReference Include="SkiaSharp" Version="3.119.0" />
 		<PackageReference Include="Syncfusion.Pdf.Net" Version="29.2.11" />
 	</ItemGroup>
-
+	<!-- <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
+		<PackageReference Include="Plugin.Firebase.Analytics" Version="3.0.0" />
+		<PackageReference Include="Plugin.Firebase.Auth" Version="3.0.0" />
+		<PackageReference Include="Plugin.Firebase.Core" Version="3.0.0" />
+	</ItemGroup>
 	<ItemGroup>
+		<GoogleServicesJson Include="Platforms\Android\google-services.json" />
+	</ItemGroup>-->
+	<ItemGroup>
+	  <MauiXaml Update="Xaml\Login.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Xaml\Menu.xaml">
 	    <Generator>MSBuild:Compile</Generator>
+		  
 	  </MauiXaml>
 	  <MauiXaml Update="Xaml\Newbie.xaml">
 	    <Generator>MSBuild:Compile</Generator>

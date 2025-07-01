@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "5877849885",
+    "project_id": "run2303app",
+    "storage_bucket": "run2303app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:5877849885:android:0b2ce2b0cd67aae5facbf4",
+        "android_client_info": {
+          "package_name": "com.ak.otpapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcelOj2e9qKfljoS1hCIrYIY8cEsfiDSA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
