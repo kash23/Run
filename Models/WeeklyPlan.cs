@@ -19,23 +19,7 @@ namespace Run.Models
         public string Tips { get; set; }                  
         public string Intensity { get; set; }
 
-        private bool isExpanded;
-        public bool IsExpanded
-        {
-            get => isExpanded;
-            set
-            {
-                if (isExpanded != value)
-                {
-                    isExpanded = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "") =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public bool IsExpanded { get; set; } = false;
     }
 }
 

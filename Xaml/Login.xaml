@@ -2,36 +2,48 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Run.Login"
-             BackgroundColor="White"
-             
-             Title="Login">
-    <VerticalStackLayout Padding="30" Spacing="20">
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="Black"
+             >
 
-        <Label Text="Mobile Number" />
-        <Entry x:Name="MobileEntry"
-               Placeholder="Enter Mobile Number"
-               Keyboard="Telephone"
-               MaxLength="10"
-               TextColor="Black"
-               Text="{Binding MobileNumber}"
-               />
+    <ScrollView>
+        <VerticalStackLayout Padding="30" Spacing="20">
 
-        <Button Text="Send OTP"
-                BackgroundColor="CadetBlue"
-                Command="{Binding SendOtpCommand}" />
+            <!-- Toggle Button -->
+            <Label Text="{Binding FormTitle}" FontSize="24" TextColor="White" HorizontalOptions="Center" />
 
-        <Label Text="Enter OTP" />
-        <Entry Placeholder="OTP"
-               Keyboard="Numeric"
-               TextColor="Black"
-               IsEnabled="{Binding IsOtpEnabled}"
-               Text="{Binding Otp}" />
+            <Button Text="{Binding ToggleButtonText}"
+                    TextColor="White"
+                    BackgroundColor="DarkGray"
+                    Command="{Binding ToggleModeCommand}" />
 
-        <Button Text="Submit"
-                IsEnabled="{Binding IsOtpEnabled}"
-                
-                BackgroundColor="MediumSeaGreen"
-                Command="{Binding SubmitOtpCommand}" />
+            <!-- Signup Fields -->
+            <StackLayout IsVisible="{Binding IsSignUpMode}">
+                <Label Text="Name" FontAttributes="Bold" TextColor="White"/>
+                <Entry Placeholder="Enter Name" Text="{Binding Name}" />
 
-    </VerticalStackLayout>
+                <Label Text="Age" FontAttributes="Bold" TextColor="White"/>
+                <Entry Placeholder="Enter Age" Keyboard="Numeric" Text="{Binding Age}" />
+
+                <Label Text="Height (cm)" FontAttributes="Bold" TextColor="White"/>
+                <Entry Placeholder="Enter Height" Keyboard="Numeric" Text="{Binding Height}" />
+
+                <Label Text="Weight (kg)" FontAttributes="Bold" TextColor="White"/>
+                <Entry Placeholder="Enter Weight" Keyboard="Numeric" Text="{Binding Weight}" />
+            </StackLayout>
+
+            <!-- Common Fields (Login + Signup) -->
+            <Label Text="Mobile Number" FontAttributes="Bold" TextColor="White"/>
+            <Entry Placeholder="Enter Mobile Number" Keyboard="Telephone" MaxLength="10" Text="{Binding MobileNumber}" />
+
+            <Label Text="Password" FontAttributes="Bold" TextColor="White"/>
+            <Entry Placeholder="Enter Password" IsPassword="True" Text="{Binding Password}" />
+
+            <Button Text="{Binding SubmitButtonText}"
+                    BackgroundColor="SteelBlue"
+                    TextColor="White"
+                    Command="{Binding SubmitCommand}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

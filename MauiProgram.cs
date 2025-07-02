@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+//using Plugin.Firebase;
+//using Plugin.Firebase.Auth;
 
 namespace Run
 {
@@ -15,8 +17,11 @@ namespace Run
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            //builder.UseFirebaseApp();
+
+
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

@@ -10,7 +10,7 @@ namespace Run
         public Login()
         {
             InitializeComponent();
-            BindingContext = new LoginViewModel();
+            BindingContext = new LoginViewModel(Navigation);
         }
     }
 }

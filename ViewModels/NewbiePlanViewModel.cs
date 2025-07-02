@@ -20,7 +20,6 @@ namespace Run.ViewModels
         private string _planSummary;
         private string weight;
         private string height;
-        private List<string> generatedPlanLines = new();
         public ObservableCollection<WeeklyPlan> WeeklyPlans { get; set; } = new();
 
         public ObservableCollection<string> Goals { get; set; }
@@ -72,6 +71,8 @@ namespace Run.ViewModels
 
         public ICommand LoadPlanCommand { get; }
         public ICommand ExportToPdfCommand { get; }
+        string bmiNote = string.Empty;
+
 
         public NewbiePlanViewModel()
         {
@@ -83,17 +84,11 @@ namespace Run.ViewModels
             LoadPlanCommand = new Command(LoadPlan);
             ExportToPdfCommand = new Command(ExportToPdf);
 
-/*            WeeklyPlans = new ObservableCollection<WeeklyPlan>();
-            ToggleExpandCommand = new Command<WeeklyPlan>((plan) =>
-            {
-                if (plan != null)
-                    plan.IsExpanded = !plan.IsExpanded;
-            });*/
-        }
 
+        }
         public void LoadPlan()
         {
-            string bmiNote = string.Empty;
+            
             double bmi = 0;
 
             if (double.TryParse(Weight, out var w) && double.TryParse(Height, out var h))
@@ -109,11 +104,11 @@ namespace Run.ViewModels
                     _ => "Obese"
                 };
 
-                bmiNote = $"📊 BMI: {Math.Round(bmi, 1)} ({bmiCategory})";
+                bmiNote = $"BMI: {Math.Round(bmi, 1)} ({bmiCategory})";
             }
             else
             {
-                bmiNote = $"📊 BMI: Not available (invalid height/weight)";
+                bmiNote = $"BMI: Not available (invalid height/weight)";
             }
 
             int days = DaysPerWeek.StartsWith("3") ? 3 :
@@ -211,39 +206,59 @@ namespace Run.ViewModels
                 return;
 
             var document = new PdfDocument();
-            var frontPage = document.AddPage();
-            var gfx1 = XGraphics.FromPdfPage(frontPage);
-            var fontTitle = new XFont("Verdana", 18, XFontStyle.Bold);
-            var fontBody = new XFont("Verdana", 12, XFontStyle.Regular);
+            var page = document.AddPage();
 
-            gfx1.DrawString("\ud83c\udfc3 Personalized Running Plan", fontTitle, XBrushes.DarkBlue,
-                new XRect(0, 40, frontPage.Width, 40), XStringFormats.TopCenter);
+            // Make the page height large enough to hold all content
+            // (default height is ~842 points for A4, increase as needed)
+            page.Height = 3000; // You can increase this based on how much content you have
 
-            int top = 100;
+            var gfx = XGraphics.FromPdfPage(page);
+            PdfSharpCore.Fonts.GlobalFontSettings.FontResolver = new MauiFontResolver();
+            var fontTitle = new XFont("OpenSans", 16, XFontStyle.Bold);
+            var fontBody = new XFont("OpenSans", 12, XFontStyle.Regular);
+
+            int top = 40;
             int spacing = 30;
-            gfx1.DrawString($"\ud83c\udf1f Goal: {Goal}", fontBody, XBrushes.Black, 40, top); top += spacing;
-            gfx1.DrawString($"\u26a1 Activity Level: {ActivityLevel}", fontBody, XBrushes.Black, 40, top); top += spacing;
-            gfx1.DrawString($"\ud83d\uddd5\ufe0f Days per Week: {DaysPerWeek}", fontBody, XBrushes.Black, 40, top); top += spacing;
-            gfx1.DrawString($"\ud83c\udfc3\u200d\u2642\ufe0f Run Style: {RunStyle}", fontBody, XBrushes.Black, 40, top); top += spacing;
-            gfx1.DrawString($"\ud83d\udcca Weight: {Weight} kg | Height: {Height} cm", fontBody, XBrushes.Black, 40, top); top += spacing;
-            gfx1.DrawString(generatedPlanLines.FirstOrDefault(l => l.StartsWith("\ud83d\udcca")) ?? "", fontBody, XBrushes.Black, 40, top);
 
-            var planPage = document.AddPage();
-            var gfx2 = XGraphics.FromPdfPage(planPage);
-            gfx2.DrawString("\ud83d\udccb 4-Week Plan", fontTitle, XBrushes.DarkGreen,
-                new XRect(0, 40, planPage.Width, 40), XStringFormats.TopCenter);
+            // Title
+            gfx.DrawString("Personalized Running Plan", 
+                fontTitle, XBrushes.DarkBlue,
+                new XRect(0, top, page.Width, 40), XStringFormats.TopCenter);
+            top += spacing * 2;
 
-            int top2 = 100;
-            foreach (var line in generatedPlanLines)
+            // Personal Info
+
+            gfx.DrawString($"Goal: {Goal}", fontBody, XBrushes.Black, 40, top); top += spacing;
+           // gfx.DrawString($"Activity Level: {ActivityLevel}", fontBody, XBrushes.Black, 40, top); top += spacing;
+           // gfx.DrawString($"Days per Week: {DaysPerWeek}", fontBody, XBrushes.Black, 40, top); top += spacing;
+           // gfx.DrawString($"Run Style: {RunStyle}", fontBody, XBrushes.Black, 40, top); top += spacing;
+            gfx.DrawString($"Weight: {Weight} kg | Height: {Height} cm | {bmiNote}", fontBody, XBrushes.Black, 40, top); top += spacing * 2;
+
+            // Plan Header
+            gfx.DrawString("4-Week Plan", fontTitle, XBrushes.DarkGreen,
+                new XRect(0, top, page.Width, 40), XStringFormats.TopCenter);
+            top += spacing * 2;
+
+            // Weekly Plans
+            foreach (var plan in WeeklyPlans)
             {
-                if (string.IsNullOrWhiteSpace(line))
+
+                gfx.DrawString($"{plan.WeekTitle}: {plan.Description}", 
+                    fontTitle, XBrushes.DarkBlue, 40, top);
+                top += spacing;
+
+               // gfx.DrawString($"Focus: {plan.Focus}", fontBody, XBrushes.Black, 40, top); top += spacing;
+              //  gfx.DrawString($"Intensity: {plan.Intensity}", fontBody, XBrushes.Black, 40, top); top += spacing;
+               // gfx.DrawString($"Tips: {plan.Tips}", fontBody, XBrushes.Black, 40, top); top += spacing;
+
+                foreach (var workout in plan.Workouts)
                 {
-                    top2 += spacing / 2;
-                    continue;
+                    gfx.DrawString($"  - {workout.Day}: {workout.Description} ", 
+                        fontBody, XBrushes.Black, 60, top);
+                    top += spacing;
                 }
 
-                gfx2.DrawString(line, fontBody, XBrushes.Black, 40, top2);
-                top2 += spacing;
+                top += spacing * 1; // extra space between weeks
             }
 
             var fileName = $"NewbiePlan_{DateTime.Now:yyyyMMddHHmmss}.pdf";
