@@ -1,94 +1,103 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Run.Controls"
              x:Class="Run.Newbie"
              NavigationPage.HasNavigationBar="False"
              xmlns:vm="clr-namespace:Run.ViewModels"
              BackgroundColor="#F5FFF5">
 
-    <!-- ViewModel Binding -->
     <ContentPage.BindingContext>
         <vm:NewbiePlanViewModel />
     </ContentPage.BindingContext>
 
-    <ScrollView Padding="24">
-        <VerticalStackLayout Spacing="20">
+    <ScrollView>
 
-            <!-- Header -->
-            <Label Text="🌱 Start Your Running Journey"
+        <VerticalStackLayout>
+            
+            <controls:TopBar  
+                             ShowBackButton="False" />
+
+            <VerticalStackLayout Padding="24" 
+                                 Spacing="20">
+
+
+
+                <!-- Header -->
+                <Label Text="🌱 Start Your Running Journey"
                    FontSize="24"
                    FontAttributes="Bold"
                    TextColor="#2E7D32"
                    HorizontalOptions="Center" />
 
-            <!-- Goal Picker -->
-            <Label Text="Select Your Goal"
+                <!-- Goal Picker -->
+                <Label Text="Select Your Goal"
                    FontSize="18"
                    TextColor="#1B5E20" />
-            <Frame Padding="0" CornerRadius="12" HasShadow="False"
+                <Frame Padding="0" CornerRadius="12" HasShadow="False"
                    BackgroundColor="White"
                    BorderColor="#A5D6A7"
                    HeightRequest="44">
-                <Picker ItemsSource="{Binding Goals}"
+                    <Picker ItemsSource="{Binding Goals}"
                         SelectedItem="{Binding Goal}"
                         Title=""
                         TextColor="#2E7D32"
                         BackgroundColor="Transparent"
                         FontSize="16" />
-            </Frame>
+                </Frame>
 
-            <!-- Activity Level Picker -->
-            <Label Text="Select Activity Level"
+                <!-- Activity Level Picker -->
+                <Label Text="Select Activity Level"
                    FontSize="18"
                    TextColor="#1B5E20" />
-            <Frame Padding="0" CornerRadius="12" HasShadow="False"
+                <Frame Padding="0" CornerRadius="12" HasShadow="False"
                    BackgroundColor="White"
                    BorderColor="#A5D6A7"
                    HeightRequest="44">
-                <Picker ItemsSource="{Binding ActivityLevels}"
+                    <Picker ItemsSource="{Binding ActivityLevels}"
                         SelectedItem="{Binding ActivityLevel}"
                         Title=""
                         TextColor="#2E7D32"
                         BackgroundColor="Transparent"
                         FontSize="16" />
-            </Frame>
+                </Frame>
 
-            <!-- Days per Week Picker -->
-            <Label Text="Select Days per Week"
+                <!-- Days per Week Picker -->
+                <Label Text="Select Days per Week"
                    FontSize="18"
                    TextColor="#1B5E20" />
-            <Frame Padding="0" CornerRadius="12" HasShadow="False"
+                <Frame Padding="0" CornerRadius="12" HasShadow="False"
                    BackgroundColor="White"
                    BorderColor="#A5D6A7"
                    HeightRequest="44">
-                <Picker ItemsSource="{Binding DaysPerWeekOptions}"
+                    <Picker ItemsSource="{Binding DaysPerWeekOptions}"
                         SelectedItem="{Binding DaysPerWeek}"
                         Title=""
                         TextColor="#2E7D32"
                         BackgroundColor="Transparent"
                         FontSize="16" />
-            </Frame>
+                </Frame>
 
-            <!-- Run Style Picker -->
-            <Label Text="Select Your Run Style"
+                <!-- Run Style Picker -->
+                <Label Text="Select Your Run Style"
                    FontSize="18"
                    TextColor="#1B5E20" />
-            <Frame Padding="0" CornerRadius="12" HasShadow="False"
+                <Frame Padding="0" CornerRadius="12" HasShadow="False"
                    BackgroundColor="White"
                    BorderColor="#A5D6A7"
                    HeightRequest="44">
-                <Picker ItemsSource="{Binding RunStyles}"
+                    <Picker ItemsSource="{Binding RunStyles}"
                         SelectedItem="{Binding RunStyle}"
                         Title=""
                         TextColor="#2E7D32"
                         BackgroundColor="Transparent"
                         FontSize="16" />
-            </Frame>
+                </Frame>
 
-            <Label Text="Enter Your Weight (kg)"
+                <Label Text="Enter Your Weight (kg)"
        FontSize="18"
        TextColor="#1B5E20" />
-            <Entry Text="{Binding Weight}"
+                <Entry Text="{Binding Weight}"
        Placeholder="e.g., 70"
        Keyboard="Numeric"
        HeightRequest="44"
@@ -97,11 +106,11 @@
        FontSize="16"
        TextChanged="OnNumericEntryChanged" />
 
-            <!-- Height Input -->
-            <Label Text="Enter Your Height (cm)"
+                <!-- Height Input -->
+                <Label Text="Enter Your Height (cm)"
        FontSize="18"
        TextColor="#1B5E20" />
-            <Entry Text="{Binding Height}"
+                <Entry Text="{Binding Height}"
        Placeholder="e.g., 175"
        Keyboard="Numeric"
        HeightRequest="44"
@@ -110,73 +119,73 @@
        FontSize="16"
        TextChanged="OnNumericEntryChanged" />
 
-            <CollectionView ItemsSource="{Binding WeeklyPlans}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame CornerRadius="16"
+                <CollectionView ItemsSource="{Binding WeeklyPlans}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame CornerRadius="16"
                    Padding="16"
                    Margin="0,10"
                    BackgroundColor="White"
                    BorderColor="#A5D6A7"
                    HasShadow="True">
 
-                            <VerticalStackLayout Spacing="8">
+                                <VerticalStackLayout Spacing="8">
 
-                                <!-- Week Title -->
-                                <Label Text="{Binding WeekTitle}"
+                                    <!-- Week Title -->
+                                    <Label Text="{Binding WeekTitle}"
                            FontSize="18"
                            FontAttributes="Bold"
                            TextColor="#2E7D32" />
 
-                                <!-- Tips -->
-                                <Label Text="{Binding Tips}"
+                                    <!-- Tips -->
+                                    <Label Text="{Binding Tips}"
                            FontSize="14"
                            TextColor="#4E4E4E" />
 
-                                <!-- Intensity -->
-                                <Label Text="🔥 Intensity: {Binding Intensity}"
+                                    <!-- Intensity -->
+                                    <Label Text="🔥 Intensity: {Binding Intensity}"
                            FontSize="13"
                            TextColor="#EF6C00"
                            FontAttributes="Italic" />
 
-                                <!-- Daily Workouts -->
-                                <CollectionView ItemsSource="{Binding Workouts}"
+                                    <!-- Daily Workouts -->
+                                    <CollectionView ItemsSource="{Binding Workouts}"
                                     SelectionMode="None"
                                     Margin="0,8,0,0">
-                                    <CollectionView.ItemTemplate>
-                                        <DataTemplate>
-                                            <Grid ColumnDefinitions="Auto, *, Auto"
+                                        <CollectionView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid ColumnDefinitions="Auto, *, Auto"
                                       Padding="6,2">
-                                                <Label Text="{Binding Day}"
+                                                    <Label Text="{Binding Day}"
                                            FontSize="14"
                                            TextColor="#1E88E5"
                                            FontAttributes="Bold"
                                            VerticalOptions="Center" />
-                                                <Label Text="{Binding Description}"
+                                                    <Label Text="{Binding Description}"
                                            FontSize="14"
                                            TextColor="#424242"
                                            Grid.Column="1"
                                            VerticalOptions="Center"
                                            Margin="10,0" />
-                                                <!-- Optional icon if IsCompleted is supported -->
-                                                <Image Source="{Binding IsCompleted, Converter={StaticResource BoolToCheckIconConverter}}"
+                                                    <!-- Optional icon if IsCompleted is supported -->
+                                                    <Image Source="{Binding IsCompleted, Converter={StaticResource BoolToCheckIconConverter}}"
                                            HeightRequest="18"
                                            WidthRequest="18"
                                            Grid.Column="2"
                                            VerticalOptions="Center" />
-                                            </Grid>
-                                        </DataTemplate>
-                                    </CollectionView.ItemTemplate>
-                                </CollectionView>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </CollectionView.ItemTemplate>
+                                    </CollectionView>
 
-                            </VerticalStackLayout>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                                </VerticalStackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
-            <!-- Generate Plan Button -->
-            <Button Text="✅ Generate Plan"
+                <!-- Generate Plan Button -->
+                <Button Text="✅ Generate Plan"
                     Command="{Binding GeneratePlanCommand}"
                     Clicked="OnViewPlanClicked"
                     BackgroundColor="#4CAF50"
@@ -187,8 +196,8 @@
                     HeightRequest="48"
                     Margin="0,20,0,0" />
 
-            <!-- Download Plan Button -->
-            <Button Text="📥 Download Plan"
+                <!-- Download Plan Button -->
+                <Button Text="📥 Download Plan"
                     Clicked="OnDownPlanClicked"
                     BackgroundColor="#2E7D32"
                     TextColor="White"
@@ -198,6 +207,10 @@
                     HeightRequest="48"
                     Margin="0,10,0,0" />
 
+            </VerticalStackLayout>
+            
         </VerticalStackLayout>
+
+        
     </ScrollView>
 </ContentPage>

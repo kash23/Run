@@ -10,15 +10,18 @@ using System.Collections.Generic;
 using Run.Models;
 using System.Text.Json;
 using System.Text;
+using Run.Services;
 
 
 namespace Run.ViewModels
 {
+
     public class LoginViewModel : INotifyPropertyChanged
     {
-
+        
         private string _mobileNumber;
         private string _name;
+         
         private int _age;
         private string _password;
         private int _height;
@@ -83,21 +86,29 @@ namespace Run.ViewModels
             SubmitCommand = new Command(async () => await OnSubmitAsync());
 
             SaveCommand = new Command(async () => await SaveUser());
-           
         }
         private async Task OnSubmitAsync()
         {
             if (string.IsNullOrWhiteSpace(MobileNumber) || string.IsNullOrWhiteSpace(Password))
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Please enter mobile and password.", "OK");
+                if (IsSignUpMode)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "Please enter all required fields", "OK");
+                }
+                else
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "Please enter registered mobile number and password.", "OK");
+                }
+
                 return;
+
             }
 
             if (IsSignUpMode)
             {
                 var user = new UserData
                 {
-                    Id = MobileNumber,
+                    Id = MobileNumber,    
                     Name = Name,
                     Age = Age,
                     Phone = MobileNumber,
@@ -112,11 +123,13 @@ namespace Run.ViewModels
             else
             {
                 var user = await _firebaseService.GetUserAsync(MobileNumber);
+
                 if (user != null && user.Password == Password)
                 {
-                    await Application.Current.MainPage.DisplayAlert("Success", $"Welcome {user.Name}!", "OK");
+                    //await Application.Current.MainPage.DisplayAlert("Success", $"Welcome {user.Name}!", "OK");
                     Preferences.Set("IsLoggedIn", true);
                     Preferences.Set("UserPhone", MobileNumber);
+                    await UserService.LoadUserAsync(MobileNumber);
                     Application.Current.MainPage = new NavigationPage(new Menu());
                 }
                 else
@@ -125,36 +138,7 @@ namespace Run.ViewModels
                 }
             }
         }
-        public class FirebaseService
-        {
-            private readonly HttpClient _httpClient;
-            private const string FirebaseUrl = "https://run2303app-default-rtdb.firebaseio.com/";
-
-            public FirebaseService()
-            {
-                _httpClient = new HttpClient();
-            }
-
-            public async Task SaveUserAsync(UserData user)
-            {
-                var json = JsonSerializer.Serialize(user);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                var response = await _httpClient.PutAsync($"{FirebaseUrl}users/{user.Id}.json", content);
-                response.EnsureSuccessStatusCode();
-            }
-
-            public async Task<UserData?> GetUserAsync(string userId)
-            {
-                var response = await _httpClient.GetAsync($"{FirebaseUrl}users/{userId}.json");
-
-                if (!response.IsSuccessStatusCode)
-                    return null;
-
-                var json = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<UserData>(json);
-            }
-        }
+     
         private async Task SaveUser()
         {
             var user = new UserData
@@ -174,66 +158,6 @@ namespace Run.ViewModels
             if (retrieved != null)
                 await Application.Current.MainPage.DisplayAlert("Success", $"Name: {retrieved.Name}", "OK");
         }
-
-/*        private async Task SendOtp()
-        {
-            using var client = new HttpClient();
-
-            var url = $"https://identitytoolkit.googleapis.com/v1/accounts:sendVerificationCode?key={firebaseApiKey}";
-
-            var requestBody = new
-            {
-                phoneNumber = $"+91{MobileNumber}",
-                recaptchaToken = "ignored" // recaptchaToken is ignored if SafetyNet is disabled in Firebase settings
-            };
-
-            var json = JsonSerializer.Serialize(requestBody);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            var response = await client.PostAsync(url, content);
-            var responseText = await response.Content.ReadAsStringAsync();
-
-            if (response.IsSuccessStatusCode)
-            {
-                var result = JsonSerializer.Deserialize<SendOtpResponse>(responseText);
-                sessionInfo = result.sessionInfo;
-                IsOtpEnabled = true;
-                await Application.Current.MainPage.DisplayAlert("OTP Sent", "OTP has been sent to your number.", "OK");
-            }
-            else
-            {
-                await Application.Current.MainPage.DisplayAlert("Error", responseText, "OK");
-            }
-        }
-        private async Task VerifyOtp()
-        {
-            using var client = new HttpClient();
-
-            var url = $"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPhoneNumber?key={firebaseApiKey}";
-
-            var requestBody = new
-            {
-                sessionInfo = sessionInfo,
-                code = Otp
-            };
-
-            var json = JsonSerializer.Serialize(requestBody);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            var response = await client.PostAsync(url, content);
-            var responseText = await response.Content.ReadAsStringAsync();
-
-            if (response.IsSuccessStatusCode)
-            {
-                var result = JsonSerializer.Deserialize<VerifyOtpResponse>(responseText);
-                await Application.Current.MainPage.DisplayAlert("Success", "OTP verified successfully!", "OK");
-                // Navigate to next page here
-            }
-            else
-            {
-                await Application.Current.MainPage.DisplayAlert("Verification Failed", responseText, "OK");
-            }
-        }*/
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string propertyName = "")

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Run.Controls.TopBar"
+             x:Name="TopBarControl"
+             HeightRequest="70">
+
+    <HorizontalStackLayout Padding="20, 0 ,0 ,0"
+                           Margin="0,10,0,0"
+                       BackgroundColor="#1E1E1E"
+                       VerticalOptions="CenterAndExpand"
+                       HeightRequest="60"
+                       Spacing="40">
+
+        <!-- Back Button 
+        <ImageButton Source="back.png"
+                 IsVisible="{Binding ShowBackButton, Source={x:Reference TopBarControl}}"
+                 Clicked="OnBackClicked"
+                 HeightRequest="24"
+                 WidthRequest="24"
+                 BackgroundColor="Transparent" />-->
+
+        <!-- Title 
+        <Label Text="{Binding PageTitle, Source={x:Reference TopBarControl}}"
+           FontAttributes="Bold"
+           FontSize="18"
+           TextColor="White"
+           HorizontalOptions="CenterAndExpand"
+           VerticalOptions="Center" />-->
+
+        <!-- Logout Button -->
+        <Button Text="Logout"
+            BackgroundColor="Transparent"
+            TextColor="White"
+            Padding="0"
+            VerticalOptions="Center"
+            Clicked="OnLogoutClicked" />
+
+        <!-- Profile Icon 
+        <ImageButton Source="profile.png"
+                 Command="{Binding ProfileCommand, Source={x:Reference TopBarControl}}"
+                 HeightRequest="32"
+                 WidthRequest="32"
+                 BackgroundColor="Transparent"
+                 VerticalOptions="Center" /> -->
+
+        <!-- User Name -->
+        <Label Text="{Binding UserName, Source={x:Reference TopBarControl}}"
+           FontSize="14"
+           TextColor="White"
+           VerticalOptions="Center"
+           HorizontalOptions="EndAndExpand" />
+    </HorizontalStackLayout>
+
+
+</ContentView>

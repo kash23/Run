@@ -1,13 +1,19 @@
-﻿using Microsoft.Maui.Controls;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Run.ViewModels;
 
 namespace Run
 {
     public partial class Menu : ContentPage
     {
+        private NewbiePlanViewModel viewModel;
         public Menu()
         {
             InitializeComponent();
+            //viewModel = new NewbiePlanViewModel();
+            //BindingContext = viewModel;
         }
         private async void OnGoToPageAClicked(object sender, EventArgs e)
         {

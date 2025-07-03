@@ -81,11 +81,13 @@ namespace Run.ViewModels
 
             OnPropertyChanged(nameof(SelectedPlan)); // Ensure UI updates
         });
+
         public TrainingPlanViewModel()
         {
             SelectedPlan = new TrainingPlan();
             SelectedPlan.Weeks = new ObservableCollection<WeeklyPlan>();
         }
+
         private void LoadPlan()
         {
             if (string.IsNullOrEmpty(SelectedDistance) || string.IsNullOrEmpty(SelectedLevel))
