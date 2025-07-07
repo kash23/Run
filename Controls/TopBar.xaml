@@ -5,52 +5,44 @@
              x:Name="TopBarControl"
              HeightRequest="70">
 
-    <HorizontalStackLayout Padding="20, 0 ,0 ,0"
-                           Margin="0,10,0,0"
-                       BackgroundColor="#1E1E1E"
-                       VerticalOptions="CenterAndExpand"
-                       HeightRequest="60"
-                       Spacing="40">
+    <Frame CornerRadius="16"
+       HasShadow="True"
+       Padding="0,0,0,0"
+       Margin="10,15,10,0"
+       BackgroundColor="#0F172A">
 
-        <!-- Back Button 
-        <ImageButton Source="back.png"
-                 IsVisible="{Binding ShowBackButton, Source={x:Reference TopBarControl}}"
-                 Clicked="OnBackClicked"
-                 HeightRequest="24"
-                 WidthRequest="24"
-                 BackgroundColor="Transparent" />-->
+        <Grid ColumnDefinitions="*,Auto"
+          Padding="20,0"
+          VerticalOptions="Center">
 
-        <!-- Title 
-        <Label Text="{Binding PageTitle, Source={x:Reference TopBarControl}}"
-           FontAttributes="Bold"
-           FontSize="18"
-           TextColor="White"
-           HorizontalOptions="CenterAndExpand"
-           VerticalOptions="Center" />-->
+            <!-- Left: Futuristic Name or Logo -->
+            <Label Grid.Column="0"
+               Text="{Binding UserName, Source={x:Reference TopBarControl}}"
+               FontSize="20"
+               FontAttributes="Bold"
+               TextColor="#60A5FA"
+               VerticalOptions="Center"
+               HorizontalOptions="Start"
+               TranslationY="1" />
 
-        <!-- Logout Button -->
-        <Button Text="Logout"
-            BackgroundColor="Transparent"
-            TextColor="White"
-            Padding="0"
-            VerticalOptions="Center"
-            Clicked="OnLogoutClicked" />
+            <!-- Right: Futuristic Logout Button -->
+            <Button Grid.Column="1"
+                Text="Logout"
+                BackgroundColor="Transparent"
+                TextColor="#93C5FD"
+                FontSize="14"
+                FontAttributes="Bold"
+                Padding="0"
+                VerticalOptions="Center"
+                HorizontalOptions="End"
+                Clicked="OnLogoutClicked">
+                <Button.Shadow>
+                    <Shadow Brush="#60A5FA" Offset="0,0" Radius="4" />
+                </Button.Shadow>
+            </Button>
+        </Grid>
+    </Frame>
 
-        <!-- Profile Icon 
-        <ImageButton Source="profile.png"
-                 Command="{Binding ProfileCommand, Source={x:Reference TopBarControl}}"
-                 HeightRequest="32"
-                 WidthRequest="32"
-                 BackgroundColor="Transparent"
-                 VerticalOptions="Center" /> -->
-
-        <!-- User Name -->
-        <Label Text="{Binding UserName, Source={x:Reference TopBarControl}}"
-           FontSize="14"
-           TextColor="White"
-           VerticalOptions="Center"
-           HorizontalOptions="EndAndExpand" />
-    </HorizontalStackLayout>
 
 
 </ContentView>

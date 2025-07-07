@@ -62,7 +62,16 @@ namespace Run.ViewModels
                 OnPropertyChanged();
             }
         }
-
+        private bool _isFrameVisible = false;
+        public bool IsFrameVisible
+        {
+            get => _isFrameVisible;
+            set
+            {
+                _isFrameVisible = value;
+                OnPropertyChanged(); // or RaisePropertyChanged
+            }
+        }
         private TrainingPlan selectedPlan;
         public TrainingPlan SelectedPlan
         {
@@ -86,6 +95,8 @@ namespace Run.ViewModels
         {
             SelectedPlan = new TrainingPlan();
             SelectedPlan.Weeks = new ObservableCollection<WeeklyPlan>();
+            IsFrameVisible = false;
+
         }
 
         private void LoadPlan()
@@ -190,15 +201,15 @@ namespace Run.ViewModels
                     Tips = i % 4 == 0 ? "Deload week, stay light" : "Push your limits gradually",
                     IsCompleted = false,
                     Workouts = new List<DailyWorkout>
-            {
-                new DailyWorkout { Day = "Monday :", WorkoutType = "Rest", Description = "Rest day", IsCompleted = false },
-                new DailyWorkout { Day = "Tuesday :", WorkoutType = "Run", Description = $"Run {progression} km", IsCompleted = false },
-                new DailyWorkout { Day = "Wednesday :", WorkoutType = "Cross Training", Description = "Optional bike/swim", IsCompleted = false },
-                new DailyWorkout { Day = "Thursday :", WorkoutType = "Tempo Run", Description = $"Tempo run {tempoKm} km", IsCompleted = false },
-                new DailyWorkout { Day = "Friday :", WorkoutType = "Rest", Description = "Rest or walk", IsCompleted = false },
-                new DailyWorkout { Day = "Saturday :", WorkoutType = "Long Run", Description = $"Long run {longRunKm} km", IsCompleted = false },
-                new DailyWorkout { Day = "Sunday :", WorkoutType = "Recovery Run", Description = $"Recovery run {recoveryKm} km", IsCompleted = false }
-            }
+                    {
+                        new DailyWorkout { Day = "Monday :", WorkoutType = "Rest", Description = "Rest day", IsCompleted = false },
+                        new DailyWorkout { Day = "Tuesday :", WorkoutType = "Run", Description = $"Run {progression} km", IsCompleted = false },
+                        new DailyWorkout { Day = "Wednesday :", WorkoutType = "Cross Training", Description = "Optional bike/swim", IsCompleted = false },
+                        new DailyWorkout { Day = "Thursday :", WorkoutType = "Tempo Run", Description = $"Tempo run {tempoKm} km", IsCompleted = false },
+                        new DailyWorkout { Day = "Friday :", WorkoutType = "Rest", Description = "Rest or walk", IsCompleted = false },
+                        new DailyWorkout { Day = "Saturday :", WorkoutType = "Long Run", Description = $"Long run {longRunKm} km", IsCompleted = false },
+                        new DailyWorkout { Day = "Sunday :", WorkoutType = "Recovery Run", Description = $"Recovery run {recoveryKm} km", IsCompleted = false }
+                    }
                 });
             }
 
@@ -210,6 +221,10 @@ namespace Run.ViewModels
                 Focus = focus,
                 Weeks = weeks
             };
+
+            if (SelectedPlan != null )
+                IsFrameVisible = true;
+
         }
 
         private string GetDayWithSuffix(int day)
@@ -232,7 +247,6 @@ namespace Run.ViewModels
             var document = new PdfDocument();
             var page = document.AddPage();
             var gfx = XGraphics.FromPdfPage(page);
-            PdfSharpCore.Fonts.GlobalFontSettings.FontResolver = new MauiFontResolver();
             var fontTitle = new XFont("OpenSans", 16, XFontStyle.Bold);
             var fontBody = new XFont("OpenSans", 12, XFontStyle.Regular);
 

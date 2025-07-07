@@ -89,19 +89,24 @@ namespace Run.ViewModels
         }
         private async Task OnSubmitAsync()
         {
-            if (string.IsNullOrWhiteSpace(MobileNumber) || string.IsNullOrWhiteSpace(Password))
+            if (IsSignUpMode)
             {
-                if (IsSignUpMode)
+                if (string.IsNullOrWhiteSpace(MobileNumber) ||
+                    string.IsNullOrWhiteSpace(Password) ||
+                    string.IsNullOrWhiteSpace(Name) ||
+                    Age < 1 || Height < 1 || Weight < 1)
                 {
                     await Application.Current.MainPage.DisplayAlert("Error", "Please enter all required fields", "OK");
+                    return;
                 }
-                else
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(MobileNumber) || string.IsNullOrWhiteSpace(Password))
                 {
                     await Application.Current.MainPage.DisplayAlert("Error", "Please enter registered mobile number and password.", "OK");
+                    return;
                 }
-
-                return;
-
             }
 
             if (IsSignUpMode)
@@ -119,6 +124,7 @@ namespace Run.ViewModels
 
                 await _firebaseService.SaveUserAsync(user);
                 await Application.Current.MainPage.DisplayAlert("Success", "Account created!", "OK");
+                Application.Current.MainPage = new NavigationPage(new Login());
             }
             else
             {

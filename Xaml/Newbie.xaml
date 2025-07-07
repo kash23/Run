@@ -119,6 +119,19 @@
        FontSize="16"
        TextChanged="OnNumericEntryChanged" />
 
+
+                <!-- Generate Plan Button -->
+                <Button Text="✅ Generate Plan"
+                    Command="{Binding GeneratePlanCommand}"
+                    Clicked="OnViewPlanClicked"
+                    BackgroundColor="#4CAF50"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    CornerRadius="16"
+                    HeightRequest="48"
+                    Margin="0,20,0,0" />
+                <Label Text="{Binding WeeklyPlans.Tips}" ></Label>
                 <CollectionView ItemsSource="{Binding WeeklyPlans}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
@@ -136,17 +149,6 @@
                            FontSize="18"
                            FontAttributes="Bold"
                            TextColor="#2E7D32" />
-
-                                    <!-- Tips -->
-                                    <Label Text="{Binding Tips}"
-                           FontSize="14"
-                           TextColor="#4E4E4E" />
-
-                                    <!-- Intensity -->
-                                    <Label Text="🔥 Intensity: {Binding Intensity}"
-                           FontSize="13"
-                           TextColor="#EF6C00"
-                           FontAttributes="Italic" />
 
                                     <!-- Daily Workouts -->
                                     <CollectionView ItemsSource="{Binding Workouts}"
@@ -184,17 +186,6 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
 
-                <!-- Generate Plan Button -->
-                <Button Text="✅ Generate Plan"
-                    Command="{Binding GeneratePlanCommand}"
-                    Clicked="OnViewPlanClicked"
-                    BackgroundColor="#4CAF50"
-                    TextColor="White"
-                    FontAttributes="Bold"
-                    FontSize="16"
-                    CornerRadius="16"
-                    HeightRequest="48"
-                    Margin="0,20,0,0" />
 
                 <!-- Download Plan Button -->
                 <Button Text="📥 Download Plan"

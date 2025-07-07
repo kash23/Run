@@ -13,7 +13,8 @@ namespace Run.Controls
         {
             InitializeComponent();
             if (UserService.CurrentUser != null)
-                UserName = $"Hi, {UserService.CurrentUser.Name} 👋";
+                UserName = $"{UserService.CurrentUser.Name} 👋";
+                //UserName = $"Hi, {UserService.CurrentUser.Name} 👋";
         }
         public static readonly BindableProperty PageTitleProperty =
         BindableProperty.Create(nameof(PageTitle), typeof(string), typeof(TopBar), string.Empty);

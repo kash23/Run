@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:Run.Controls"
              x:Class="Run.Menu"
-             NavigationPage.HasNavigationBar="False"
-             BackgroundColor="#FAFAFA">
+             NavigationPage.HasNavigationBar="False">
     <ScrollView>
         <VerticalStackLayout>
             
@@ -19,7 +18,6 @@
                 <Label Text="🏃‍♂️ Run Planner"
     FontSize="34"
     FontAttributes="Bold"
-    TextColor="#111827"
     HorizontalOptions="Center"
     FontFamily="Arial" />
 
@@ -58,7 +56,7 @@
                 <!-- Footer / Tagline -->
                 <Label Text="Train smart. Run free. ✨"
     FontSize="14"
-    TextColor="#6B7280"
+    TextColor="Lavender"
     HorizontalOptions="Center"
     Margin="0,30,0,0" />
 

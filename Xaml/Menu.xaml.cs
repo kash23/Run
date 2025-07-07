@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Run.Services;
 using Run.ViewModels;
 
 namespace Run
@@ -12,6 +13,7 @@ namespace Run
         public Menu()
         {
             InitializeComponent();
+            string UserName = $"{UserService.CurrentUser.Name} 👋";
             //viewModel = new NewbiePlanViewModel();
             //BindingContext = viewModel;
         }

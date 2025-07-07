@@ -5,221 +5,137 @@
              x:Class="Run.MainPage"
              NavigationPage.HasNavigationBar="False"
              BackgroundColor="#F0F6FF">
-
+    <ScrollView>
         <VerticalStackLayout>
-            
-            <controls:TopBar 
-                             ShowBackButton="False" />
 
-        <ScrollView>
+            <controls:TopBar 
+                         ShowBackButton="False" />
             <VerticalStackLayout Padding="24" 
-                                 Spacing="20">
+                             Spacing="20">
 
 
                 <Label  Text="🧭 Select Your Training Plan"
-                        FontSize="26"
-                        FontAttributes="Bold"
-                        HorizontalOptions="Center"
-                        TextColor="#1E3A8A" />
+                    FontSize="26"
+                    FontAttributes="Bold"
+                    HorizontalOptions="Center"
+                    TextColor="#1E3A8A" />
 
                 <!-- Distance Picker -->
                 <Frame BackgroundColor="White"
-                        CornerRadius="16"
-                        Padding="16"
-                        HasShadow="True"
-                        BorderColor="#BFDBFE">
+                    CornerRadius="16"
+                    Padding="16"
+                    HasShadow="True"
+                    BorderColor="#BFDBFE">
                     <VerticalStackLayout Spacing="8">
                         <Label Text="Choose Distance"
-                                 FontSize="16"
-                                 TextColor="#2563EB"
-                                 FontAttributes="Bold" />
+                             FontSize="16"
+                             TextColor="#2563EB"
+                             FontAttributes="Bold" />
 
                         <Frame CornerRadius="8"
-                                 Padding="0"
-                                 HasShadow="False"
-                                 HeightRequest="44"
-                                 BorderColor="#3B82F6"
-                                 BackgroundColor="White">
+                             Padding="0"
+                             HasShadow="False"
+                             HeightRequest="44"
+                             BorderColor="#3B82F6"
+                             BackgroundColor="White">
 
                             <Picker Title=""
-                                      ItemsSource="{Binding Distances}"
-                                      SelectedItem="{Binding SelectedDistance}"
-                                      FontSize="16"
-                                      TextColor="#1E40AF"
-                                      BackgroundColor="Transparent" />
+                                  ItemsSource="{Binding Distances}"
+                                  SelectedItem="{Binding SelectedDistance}"
+                                  FontSize="16"
+                                  TextColor="#1E40AF"
+                                  BackgroundColor="Transparent" />
                         </Frame>
                     </VerticalStackLayout>
                 </Frame>
 
                 <!-- Level Picker -->
                 <Frame BackgroundColor="White"
-                         CornerRadius="16"
-                         Padding="16"
-                         HasShadow="True"
-                         BorderColor="#BFDBFE">
+                     CornerRadius="16"
+                     Padding="16"
+                     HasShadow="True"
+                     BorderColor="#BFDBFE">
                     <VerticalStackLayout Spacing="8">
                         <Label Text="Choose Level"
-                                 FontSize="16"
-                                 TextColor="#2563EB"
-                                 FontAttributes="Bold" />
+                             FontSize="16"
+                             TextColor="#2563EB"
+                             FontAttributes="Bold" />
 
                         <Frame CornerRadius="8"
-                                 Padding="0"
-                                 HasShadow="False"
-                                 HeightRequest="44"
-                                 BorderColor="#3B82F6"
-                                 BackgroundColor="White">
+                             Padding="0"
+                             HasShadow="False"
+                             HeightRequest="44"
+                             BorderColor="#3B82F6"
+                             BackgroundColor="White">
 
                             <Picker Title=""
-                                    ItemsSource="{Binding Levels}"
-                                    SelectedItem="{Binding SelectedLevel}"
-                                    FontSize="16"
-                                    TextColor="#1E40AF"
-                                    BackgroundColor="Transparent" />
+                                ItemsSource="{Binding Levels}"
+                                SelectedItem="{Binding SelectedLevel}"
+                                FontSize="16"
+                                TextColor="#1E40AF"
+                                BackgroundColor="Transparent" />
                         </Frame>
                     </VerticalStackLayout>
                 </Frame>
 
                 <!-- Plan Summary -->
                 <Frame BackgroundColor="White"
-                        CornerRadius="16"
-                        Padding="16"
-                        HasShadow="True"
-                        BorderColor="#BFDBFE">
-                    <VerticalStackLayout Spacing="6">
+                    CornerRadius="16"
+                    Padding="16"
+                    HasShadow="True"
+                    BorderColor="#BFDBFE" 
+                   IsVisible="{Binding IsFrameVisible}">
+                    <VerticalStackLayout Spacing="6" >
                         <Label Text="📋 Plan Summary"
-                                 FontSize="18"
-                                 FontAttributes="Bold"
-                                 TextColor="#1D4ED8" />
+                             FontSize="18"
+                             FontAttributes="Bold"
+                             TextColor="#1D4ED8" />
 
                         <HorizontalStackLayout>
                             <Label Text="Duration (Weeks):"
-                                    FontSize="14"
-                                    TextColor="#6B7280" />
+                                FontSize="14"
+                                TextColor="#6B7280" />
                             <Label Text="{Binding SelectedPlan.DurationWeeks}"
-                                    FontSize="14"
-                                    FontAttributes="Bold"
-                                    TextColor="#1E40AF"
-                                    HorizontalOptions="EndAndExpand" />
+                                FontSize="14"
+                                FontAttributes="Bold"
+                                TextColor="#1E40AF"
+                                HorizontalOptions="EndAndExpand" />
                         </HorizontalStackLayout>
 
                         <HorizontalStackLayout>
                             <Label Text="Focus:"
-                                    FontSize="14"
-                                    TextColor="#6B7280" />
+                                FontSize="14"
+                                TextColor="#6B7280" />
                             <Label Text="{Binding SelectedPlan.Focus}"
-                                    FontSize="14"
-                                    FontAttributes="Bold"
-                                    TextColor="#2563EB"
-                                    HorizontalOptions="EndAndExpand" />
+                                FontSize="14"
+                                FontAttributes="Bold"
+                                TextColor="#2563EB"
+                                HorizontalOptions="EndAndExpand" />
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
                 </Frame>
 
                 <!-- Weekly Plan List -->
                 <Label Text="📆 Weekly Breakdown"
-                        FontSize="20"
-                        FontAttributes="Bold"
-                        TextColor="#1E3A8A"
-                        Margin="0,10,0,0" />
-
-                <CollectionView ItemsSource="{Binding SelectedPlan.Weeks}"
-                                SelectionMode="None"
-                                ItemSizingStrategy="MeasureFirstItem"
-                                Margin="0"
-                                HeightRequest="600">
-                    <!-- OR set dynamically -->
-                    
-                    
-
-                    <CollectionView.ItemsLayout>
-                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
-                    </CollectionView.ItemsLayout>
-
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Frame BackgroundColor="White"
-                                   CornerRadius="14"
-                                   Padding="14"
-                                   BorderColor="#BFDBFE"
-                                   HasShadow="False"
-                                   Margin="0,6">
-
-                                <VerticalStackLayout Spacing="6">
-
-                                    <!-- Tap to Expand -->
-                                    <VerticalStackLayout.GestureRecognizers>
-                                        <TapGestureRecognizer
-                                            Command="{Binding BindingContext.ToggleWeekCommand, Source={x:Reference Page}}"
-                                            CommandParameter="{Binding}" />
-                                    </VerticalStackLayout.GestureRecognizers>
-
-                                    <!-- Title & Tip -->
-                                    <Label Text="{Binding WeekTitle}"
-                                           FontSize="16"
-                                           FontAttributes="Bold"
-                                           TextColor="#1E40AF" />
-
-                                    <Label Text="{Binding Tips}"
-                                           FontSize="13"
-                                           TextColor="#6B7280"
-                                           LineBreakMode="WordWrap"
-                                           MaxLines="3" />
-
-                                    <!-- Lazy Workouts -->
-                                    <CollectionView IsVisible="{Binding IsExpanded}"
-                                                    ItemsSource="{Binding Workouts}"
-                                                    SelectionMode="None"
-                                                    ItemSizingStrategy="MeasureFirstItem"
-                                                    Margin="0,8,0,0"
-                                                    HeightRequest="160">
-
-                                        <CollectionView.ItemsLayout>
-                                            <LinearItemsLayout Orientation="Vertical" />
-                                        </CollectionView.ItemsLayout>
-
-                                        <CollectionView.ItemTemplate>
-                                            <DataTemplate>
-                                                <Grid Padding="6,4">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
-
-                                                    <Label Text="{Binding Day}"
-                                                           FontSize="14"
-                                                           FontAttributes="Bold"
-                                                           TextColor="#1E3A8A"
-                                                           VerticalOptions="Center" />
-
-                                                    <Label Text="{Binding Description}"
-                                                           Grid.Column="1"
-                                                           FontSize="14"
-                                                           TextColor="#374151"
-                                                           VerticalOptions="Center"
-                                                           LineBreakMode="TailTruncation" />
-                                                </Grid>
-                                            </DataTemplate>
-                                        </CollectionView.ItemTemplate>
-                                    </CollectionView>
-
-                                </VerticalStackLayout>
-                            </Frame>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                    FontSize="20"
+                    FontAttributes="Bold"
+                    TextColor="#1E3A8A"
+                    Margin="0,10,0,0" IsVisible="{Binding IsFrameVisible}" />
 
                 <!-- Export Button -->
                 <Button Text="📥 Download PDF"
-                        Command="{Binding ExportToPdfCommand}"
-                        BackgroundColor="#3B82F6"
-                        TextColor="White"
-                        FontAttributes="Bold"
-                        CornerRadius="16"
-                        FontSize="16"
-                        HeightRequest="48"
-                        Margin="0,20,0,0" />
+                    IsVisible="{Binding IsFrameVisible}"
+                    Command="{Binding ExportToPdfCommand}"
+                    BackgroundColor="#3B82F6"
+                    FontAttributes="Bold"
+                    CornerRadius="16"
+                    FontSize="16"
+                    HeightRequest="48"
+                    Margin="0,20,0,0" />
             </VerticalStackLayout>
+        </VerticalStackLayout>
     </ScrollView>
-    </VerticalStackLayout>
+    
 </ContentPage>
+    
+    

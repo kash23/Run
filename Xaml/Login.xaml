@@ -2,34 +2,34 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Run.Login"
+             BackgroundColor="{AppThemeBinding Light=#FAFAF7, Dark=#1E1E2E}"
              NavigationPage.HasNavigationBar="False"
-             BackgroundColor="Black"
              >
 
     <ScrollView>
         <VerticalStackLayout Padding="30" Spacing="20">
 
             <!-- Toggle Button -->
-            <Label Text="{Binding FormTitle}" FontSize="24" TextColor="White" HorizontalOptions="Center" />
+            <Label Text="{Binding FormTitle}" FontSize="24"  HorizontalOptions="Center" />
 
 
 
             <!-- Signup Fields -->
             <StackLayout IsVisible="{Binding IsSignUpMode}">
-                <Label Margin="0,10,0,10" Text="Name" FontAttributes="Bold" TextColor="White"/>
+                <Label Margin="0,10,0,10" Text="Name" FontAttributes="Bold" />
                 <Entry Margin="0,10,0,10" Placeholder="Enter Name" Text="{Binding Name}" />
 
                 <HorizontalStackLayout>
                     <VerticalStackLayout Margin="0,0,30,0">
-                        <Label Margin="0,10,0,10"  Text="Age" FontAttributes="Bold" TextColor="White"/>
+                        <Label Margin="0,10,0,10"  Text="Age" FontAttributes="Bold" />
                         <Entry Margin="0,10,0,10" Placeholder="Enter Age" Keyboard="Numeric" Text="{Binding Age}" />
                     </VerticalStackLayout>
                     <VerticalStackLayout Margin="0,0,30,0">
-                        <Label Margin="0,10,0,10" Text="Height (cm)" FontAttributes="Bold" TextColor="White"/>
+                        <Label Margin="0,10,0,10" Text="Height (cm)" FontAttributes="Bold" />
                         <Entry Margin="0,10,0,10" Placeholder="Enter Height" Keyboard="Numeric" Text="{Binding Height}" />
                     </VerticalStackLayout>
                     <VerticalStackLayout Margin="0,0,30,0">
-                        <Label Margin="0,10,0,10" Text="Weight (kg)" FontAttributes="Bold" TextColor="White"/>
+                        <Label Margin="0,10,0,10" Text="Weight (kg)" FontAttributes="Bold" />
                         <Entry Margin="0,10,0,10" Placeholder="Enter Weight" Keyboard="Numeric" Text="{Binding Weight}" />
                     </VerticalStackLayout>
                 </HorizontalStackLayout>
@@ -38,28 +38,26 @@
 
             <!-- Common Fields (Login + Signup) -->
             <StackLayout>
-                <Label Margin="0,10,0,10" Text="Mobile Number" FontAttributes="Bold" TextColor="White"/>
+                <Label Margin="0,10,0,10" Text="Mobile Number" FontAttributes="Bold" />
                 <Entry Margin="0,10,0,10" Placeholder="Enter Mobile Number" Keyboard="Telephone" MaxLength="10" Text="{Binding MobileNumber}" />
 
-                <Label Margin="0,10,0,10" Text="Password" FontAttributes="Bold" TextColor="White"/>
+                <Label Margin="0,10,0,10" Text="Password" FontAttributes="Bold" />
                 <Entry Margin="0,10,0,10" Placeholder="Enter Password" IsPassword="True" Text="{Binding Password}" />
             </StackLayout>
 
             <StackLayout IsVisible="{Binding IsSignUpMode}">
-                <Label Margin="0,10,0,10" Text="Confirm Password" FontAttributes="Bold" TextColor="White"/>
+                <Label Margin="0,10,0,10" Text="Confirm Password" FontAttributes="Bold" />
                 <Entry Margin="0,10,0,10" Placeholder="Confirm Password" IsPassword="True" Text="{Binding Password}" />
             </StackLayout>
 
 
             <Button Text="{Binding SubmitButtonText}"
-                    BackgroundColor="Transparent"
-                    TextColor="White"
+                    BackgroundColor="#AFCFFF"
                     BorderColor="White"
                     Command="{Binding SubmitCommand}" />
             <Button Text="{Binding ToggleButtonText}"
-                    TextColor="White"
+                    BackgroundColor="#B7E5B7"
                     BorderColor="DimGrey"
-                    BackgroundColor="Transparent"
                     Command="{Binding ToggleModeCommand}" />
 
         </VerticalStackLayout>

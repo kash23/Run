@@ -8,6 +8,8 @@ namespace Run
     {
         public static MauiApp CreateMauiApp()
         {
+            PdfSharpCore.Fonts.GlobalFontSettings.FontResolver = new MauiFontResolver();
+
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()

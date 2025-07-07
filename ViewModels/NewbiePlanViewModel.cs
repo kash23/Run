@@ -7,6 +7,7 @@ using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
 using System.IO;
 using System.Collections.Generic;
+using Run.Services;
 using Run.Models;
 
 namespace Run.ViewModels
@@ -81,6 +82,9 @@ namespace Run.ViewModels
             DaysPerWeekOptions = new ObservableCollection<string> { "3 days", "4 days", "5 days" };
             RunStyles = new ObservableCollection<string> { "Long Runs", "Interval Training", "Hill Workouts" };
 
+            Height = UserService.CurrentUser.height.ToString();
+
+            Weight = UserService.CurrentUser.weight.ToString();
             LoadPlanCommand = new Command(LoadPlan);
             ExportToPdfCommand = new Command(ExportToPdf);
 
@@ -208,12 +212,9 @@ namespace Run.ViewModels
             var document = new PdfDocument();
             var page = document.AddPage();
 
-            // Make the page height large enough to hold all content
-            // (default height is ~842 points for A4, increase as needed)
-            page.Height = 3000; // You can increase this based on how much content you have
+            page.Height = 3000; 
 
             var gfx = XGraphics.FromPdfPage(page);
-            PdfSharpCore.Fonts.GlobalFontSettings.FontResolver = new MauiFontResolver();
             var fontTitle = new XFont("OpenSans", 16, XFontStyle.Bold);
             var fontBody = new XFont("OpenSans", 12, XFontStyle.Regular);
 
