@@ -12,7 +12,7 @@ using Run.Services;
 namespace Run
 {
     public partial class App : Application
-    {
+    { 
         private readonly FirebaseService _firebaseService = new();
         public App()
         {
