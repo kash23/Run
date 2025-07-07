@@ -2,9 +2,14 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Syncfusion.Pdf;
-using Syncfusion.Pdf.Graphics;
+using PdfSharpCore.Drawing;
+using QuestPDF.Fluent;
+using PdfSharpCore.Pdf;
+using PdfSharpCore.Drawing;
 using Microsoft.Maui.Storage;
+using System.IO;
+using Run.Models;
+using Run.Models;
 using Run.Models;
 
 namespace Run.ViewModels
@@ -47,7 +52,26 @@ namespace Run.ViewModels
                 }
             }
         }
-
+        private WeeklyPlan weekplan;
+        public WeeklyPlan WeekPlan
+        {
+            get => weekplan;
+            set
+            {
+                weekplan = value;
+                OnPropertyChanged();
+            }
+        }
+        private bool _isFrameVisible = false;
+        public bool IsFrameVisible
+        {
+            get => _isFrameVisible;
+            set
+            {
+                _isFrameVisible = value;
+                OnPropertyChanged(); // or RaisePropertyChanged
+            }
+        }
         private TrainingPlan selectedPlan;
         public TrainingPlan SelectedPlan
         {
@@ -59,14 +83,64 @@ namespace Run.ViewModels
             }
         }
 
+        public ICommand ToggleWeekCommand => new Command<WeeklyPlan>((week) =>
+        {
+            if (week != null)
+                week.IsExpanded = !week.IsExpanded;
+
+            OnPropertyChanged(nameof(SelectedPlan)); // Ensure UI updates
+        });
+
+        public TrainingPlanViewModel()
+        {
+            SelectedPlan = new TrainingPlan();
+            SelectedPlan.Weeks = new ObservableCollection<WeeklyPlan>();
+            IsFrameVisible = false;
+
+        }
+
         private void LoadPlan()
         {
             if (string.IsNullOrEmpty(SelectedDistance) || string.IsNullOrEmpty(SelectedLevel))
                 return;
 
             ObservableCollection<WeeklyPlan> weeks = new();
-            string focus = string.Empty;
 
+            // Focus description (before using it in SelectedPlan)
+            string focus = SelectedDistance switch
+            {
+                "5K" => SelectedLevel switch
+                {
+                    "Beginner" => "Build basic running habit",
+                    "Intermediate" => "Improve pace and form",
+                    "Advanced" => "Sub-20 min 5K training",
+                    _ => "Improve 5K fitness"
+                },
+                "10K" => SelectedLevel switch
+                {
+                    "Beginner" => "Build stamina and distance",
+                    "Intermediate" => "Build endurance and speed",
+                    "Advanced" => "Race-specific peak training",
+                    _ => "10K performance"
+                },
+                "Half Marathon" => SelectedLevel switch
+                {
+                    "Beginner" => "Build to 21K finish",
+                    "Intermediate" => "Build race pace endurance",
+                    "Advanced" => "Sub-2 hour half marathon",
+                    _ => "Half marathon improvement"
+                },
+                "Full Marathon" => SelectedLevel switch
+                {
+                    "Beginner" => "Finish the marathon safely",
+                    "Intermediate" => "Endurance and pace mix",
+                    "Advanced" => "Sub-4 or Boston Qualifier",
+                    _ => "Marathon prep"
+                },
+                _ => "Running training"
+            };
+
+            // Number of weeks per plan
             int totalWeeks = SelectedDistance switch
             {
                 "5K" => SelectedLevel switch
@@ -100,62 +174,44 @@ namespace Run.ViewModels
                 _ => 0
             };
 
+            // Base values for km
+            int baseKm = SelectedDistance switch
+            {
+                "5K" => 3,
+                "10K" => 5,
+                "Half Marathon" => 8,
+                "Full Marathon" => 12,
+                _ => 4
+            };
+
             for (int i = 1; i <= totalWeeks; i++)
             {
+                int progression = (int)(baseKm + (i * 0.75));
+                int longRunKm = baseKm + (i * 1);
+                int tempoKm = (int)(baseKm + (i * 0.5));
+                int recoveryKm = Math.Max(2, baseKm / 2);
+
                 weeks.Add(new WeeklyPlan
                 {
                     WeekTitle = $"Week {i}",
                     WeekNumber = i,
-                    Description = $"Sample plan for {SelectedLevel} {SelectedDistance}, week {i}",
+                    Description = $"{SelectedLevel} {SelectedDistance} Plan – Week {i}",
                     Focus = i % 4 == 0 ? "Recovery & Adaptation" : "Progression",
                     Intensity = i % 4 == 0 ? "Easy" : "Moderate",
-                    Tips = i % 4 == 0 ? "Deload week, stay light" : "Focus on improving distance or speed",
+                    Tips = i % 4 == 0 ? "Deload week, stay light" : "Push your limits gradually",
                     IsCompleted = false,
                     Workouts = new List<DailyWorkout>
-            {
-                new DailyWorkout { Day = "Monday", WorkoutType = "Rest", Description = "Recovery day", IsCompleted = false },
-                new DailyWorkout { Day = "Tuesday", WorkoutType = "Run", Description = "Easy run", IsCompleted = false },
-                new DailyWorkout { Day = "Wednesday", WorkoutType = "Cross Training", Description = "Bike/Swim or Strength", IsCompleted = false },
-                new DailyWorkout { Day = "Thursday", WorkoutType = "Tempo Run", Description = "Run at steady effort", IsCompleted = false },
-                new DailyWorkout { Day = "Friday", WorkoutType = "Rest", Description = "Optional light yoga", IsCompleted = false },
-                new DailyWorkout { Day = "Saturday", WorkoutType = "Long Run", Description = $"Run progressively longer: Week {i} km base", IsCompleted = false },
-                new DailyWorkout { Day = "Sunday", WorkoutType = "Walk or Easy Run", Description = "Light recovery movement", IsCompleted = false },
-            }
+                    {
+                        new DailyWorkout { Day = "Monday :", WorkoutType = "Rest", Description = "Rest day", IsCompleted = false },
+                        new DailyWorkout { Day = "Tuesday :", WorkoutType = "Run", Description = $"Run {progression} km", IsCompleted = false },
+                        new DailyWorkout { Day = "Wednesday :", WorkoutType = "Cross Training", Description = "Optional bike/swim", IsCompleted = false },
+                        new DailyWorkout { Day = "Thursday :", WorkoutType = "Tempo Run", Description = $"Tempo run {tempoKm} km", IsCompleted = false },
+                        new DailyWorkout { Day = "Friday :", WorkoutType = "Rest", Description = "Rest or walk", IsCompleted = false },
+                        new DailyWorkout { Day = "Saturday :", WorkoutType = "Long Run", Description = $"Long run {longRunKm} km", IsCompleted = false },
+                        new DailyWorkout { Day = "Sunday :", WorkoutType = "Recovery Run", Description = $"Recovery run {recoveryKm} km", IsCompleted = false }
+                    }
                 });
             }
-
-            focus = SelectedDistance switch
-            {
-                "5K" => SelectedLevel switch
-                {
-                    "Beginner" => "Build basic running habit",
-                    "Intermediate" => "Improve pace and form",
-                    "Advanced" => "Sub-20 min 5K training",
-                    _ => "Improve 5K fitness"
-                },
-                "10K" => SelectedLevel switch
-                {
-                    "Beginner" => "Build stamina and distance",
-                    "Intermediate" => "Build endurance and speed",
-                    "Advanced" => "Race-specific peak training",
-                    _ => "10K performance"
-                },
-                "Half Marathon" => SelectedLevel switch
-                {
-                    "Beginner" => "Build to 21K finish",
-                    "Intermediate" => "Build race pace endurance",
-                    "Advanced" => "Sub-2 hour half marathon",
-                    _ => "Half marathon improvement"
-                },
-                "Full Marathon" => SelectedLevel switch
-                {
-                    "Beginner" => "Finish the marathon safely",
-                    "Intermediate" => "Endurance and pace mix",
-                    "Advanced" => "Sub-4 or Boston Qualifier",
-                    _ => "Marathon prep"
-                },
-                _ => "Running training"
-            };
 
             SelectedPlan = new TrainingPlan
             {
@@ -165,40 +221,77 @@ namespace Run.ViewModels
                 Focus = focus,
                 Weeks = weeks
             };
+
+            if (SelectedPlan != null )
+                IsFrameVisible = true;
+
         }
 
+        private string GetDayWithSuffix(int day)
+        {
+            if (day % 100 >= 11 && day % 100 <= 13)
+                return $"{day}th";
+
+            return (day % 10) switch
+            {
+                1 => $"{day}st",
+                2 => $"{day}nd",
+                3 => $"{day}rd",
+                _ => $"{day}th"
+            };
+        }
         public async void ExportPlanToPdf()
         {
-            TrainingPlan plan = SelectedPlan;
-            using var document = new PdfDocument();
-            var page = document.Pages.Add();
+            if (SelectedPlan == null) return;
 
-            var font = new PdfStandardFont(PdfFontFamily.Helvetica, 14);
-            page.Graphics.DrawString($"Training Plan - {SelectedPlan.Distance} ({SelectedPlan.Level})", font, PdfBrushes.Black, new Syncfusion.Drawing.PointF(0, 0));
+            var document = new PdfDocument();
+            var page = document.AddPage();
+            var gfx = XGraphics.FromPdfPage(page);
+            var fontTitle = new XFont("OpenSans", 16, XFontStyle.Bold);
+            var fontBody = new XFont("OpenSans", 12, XFontStyle.Regular);
 
-            float y = 25;
+            double y = 40;
+       
+            DateTime now = DateTime.Now;
+
+            string dayWithSuffix = GetDayWithSuffix(now.Day);
+
+            gfx.DrawString($"Training Plan - {SelectedPlan.Distance} " +
+                $"({SelectedPlan.Level})", fontTitle, XBrushes.Black, 
+                new XPoint(40, y));
+            y += 30;
+
             foreach (var week in SelectedPlan.Weeks)
             {
-                page.Graphics.DrawString($"{week.WeekTitle}: {week.Description}", font, PdfBrushes.Black, new Syncfusion.Drawing.PointF(0, y));
+                gfx.DrawString($"{week.WeekTitle}: {week.Description}", 
+                    fontBody, XBrushes.Black, new XPoint(40, y));
                 y += 20;
+
+                foreach (var workout in week.Workouts)
+                {
+                    gfx.DrawString($"• {workout.Day} {workout.WorkoutType} - {workout.Description}", fontBody, XBrushes.Gray, new XPoint(60, y));
+                    y += 18;
+                }
+
+                y += 10;
+
+                if (y > page.Height - 60)
+                {
+                    page = document.AddPage();
+                    gfx = XGraphics.FromPdfPage(page);
+                    y = 40;
+                }
             }
 
-            string path = Path.Combine(FileSystem.CacheDirectory, "Plan.pdf");
-            using var fileStream = File.Create(path);
-            document.Save(fileStream);
-            fileStream.Close();
-
-            await Share.RequestAsync(new ShareFileRequest
-            {
-                Title = "Training Plan",
-                File = new ShareFile(path)
-            });
-
-
-
+            // Save
+            string path = Path.Combine(FileSystem.CacheDirectory, "TrainingPlan.pdf");
+            using var stream = File.Create(path);
+            document.Save(stream);
+            await Launcher.Default.OpenAsync(new OpenFileRequest { File = new ReadOnlyFile(path) });
         }
+
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "") =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

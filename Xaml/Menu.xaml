@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Run.Controls"
+             x:Class="Run.Menu"
+             NavigationPage.HasNavigationBar="False">
+    <ScrollView>
+        <VerticalStackLayout>
+            
+            <controls:TopBar ShowBackButton="False" />
+            
+            <VerticalStackLayout Padding="30"
+              Spacing="40"
+              VerticalOptions="Center"
+              HorizontalOptions="Center">
+
+
+                <Label Text="🏃‍♂️ Run Planner"
+    FontSize="34"
+    FontAttributes="Bold"
+    HorizontalOptions="Center"
+    FontFamily="Arial" />
+
+                <!-- Newbie Button -->
+                <Frame CornerRadius="18"
+    HasShadow="True"
+    BackgroundColor="#4CAF50"
+    WidthRequest="260"
+    HeightRequest="58"
+    Padding="0">
+                    <Button Text="🌱 Start as Newbie"
+         Clicked="OnGoToPageAClicked"
+         BackgroundColor="Transparent"
+         TextColor="White"
+         FontSize="18"
+         FontAttributes="Bold"
+         CornerRadius="18" />
+                </Frame>
+
+                <!-- Run Categories Button -->
+                <Frame CornerRadius="18"
+    HasShadow="True"
+    BackgroundColor="#3B82F6"
+    WidthRequest="260"
+    HeightRequest="58"
+    Padding="0">
+                    <Button Text="📊 Run Categories"
+         Clicked="OnGoToPageBClicked"
+         BackgroundColor="Transparent"
+         TextColor="White"
+         FontSize="18"
+         FontAttributes="Bold"
+         CornerRadius="18" />
+                </Frame>
+
+                <!-- Footer / Tagline -->
+                <Label Text="Train smart. Run free. ✨"
+    FontSize="14"
+    TextColor="Lavender"
+    HorizontalOptions="Center"
+    Margin="0,30,0,0" />
+
+            </VerticalStackLayout>
+            
+        </VerticalStackLayout>
+       
+    </ScrollView>
+    
+</ContentPage>
