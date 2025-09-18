@@ -3,19 +3,16 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Run.Services;
-using Run.ViewModels;
+using Run.ViewModels; 
 
 namespace Run
 {
     public partial class Menu : ContentPage
     {
-        private NewbiePlanViewModel viewModel;
+
         public Menu()
         {
             InitializeComponent();
-            string UserName = $"{UserService.CurrentUser.Name} 👋";
-            //viewModel = new NewbiePlanViewModel();
-            //BindingContext = viewModel;
         }
         private async void OnGoToPageAClicked(object sender, EventArgs e)
         {
@@ -25,15 +22,34 @@ namespace Run
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Navigation failed: {ex.Message}");
                 await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
             }
         }
 
         private async void OnGoToPageBClicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new MainPage()); 
+            try
+            {
+                await Navigation.PushAsync(new MainPage());
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            }
+        }
+
+        private async void OnGoToPageCClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                await Navigation.PushAsync(new Workouts());
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            }
         }
     }
+
 }
 

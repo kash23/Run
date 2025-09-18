@@ -8,8 +8,7 @@
     <ScrollView>
         <VerticalStackLayout>
 
-            <controls:TopBar 
-                         ShowBackButton="False" />
+
             <VerticalStackLayout Padding="24" 
                              Spacing="20">
 

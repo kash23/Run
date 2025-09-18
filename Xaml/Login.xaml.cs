@@ -12,5 +12,5 @@ namespace Run
             InitializeComponent();
             BindingContext = new LoginViewModel(Navigation);
         }
-    }
+    }  
 }

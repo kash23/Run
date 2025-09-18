@@ -82,9 +82,9 @@ namespace Run.ViewModels
             DaysPerWeekOptions = new ObservableCollection<string> { "3 days", "4 days", "5 days" };
             RunStyles = new ObservableCollection<string> { "Long Runs", "Interval Training", "Hill Workouts" };
 
-            Height = UserService.CurrentUser.height.ToString();
+            Height =  "";
 
-            Weight = UserService.CurrentUser.weight.ToString();
+            Weight = "";
             LoadPlanCommand = new Command(LoadPlan);
             ExportToPdfCommand = new Command(ExportToPdf);
 

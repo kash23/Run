@@ -13,28 +13,28 @@ namespace Run
 {
     public partial class App : Application
     { 
-        private readonly FirebaseService _firebaseService = new();
+        //private readonly FirebaseService _firebaseService = new();
         public App()
         {
             InitializeComponent();
+            MainPage = new NavigationPage(new Menu());
+            InitializeApp();
+        }
 
-            MainPage = new NavigationPage(new Login());
+        private async void InitializeApp()
+        {
             bool isLoggedIn = Preferences.Get("IsLoggedIn", false);
-            string MobileNumber = Preferences.Get("UserPhone", string.Empty);
-            if (isLoggedIn)
+            string mobileNumber = Preferences.Get("UserPhone", string.Empty);
+
+            if (isLoggedIn && !string.IsNullOrEmpty(mobileNumber))
             {
-                var user =  _firebaseService.GetUserAsync(MobileNumber);
+                await UserService.LoadUserAsync(mobileNumber);
                 Preferences.Set("IsLoggedIn", true);
-                Preferences.Set("UserPhone", MobileNumber);
-                UserService.LoadUserAsync(MobileNumber);
+                Preferences.Set("UserPhone", mobileNumber);
 
                 MainPage = new NavigationPage(new Menu());
             }
-            else
-            {
-                MainPage = new NavigationPage(new Login());
-            }
-            //   101988493212
+
         }
     }
 }

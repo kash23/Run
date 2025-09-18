@@ -12,6 +12,8 @@ namespace Run
         {
             InitializeComponent();
             BindingContext = new TrainingPlanViewModel();
+            Console.WriteLine("MainPage constructor called");
+            
         }
     }
 

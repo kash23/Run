@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Run.Controls"
+             xmlns:vm="clr-namespace:Run.ViewModels"
+             x:Class="Run.Workouts"
+             Title=""
+             NavigationPage.HasNavigationBar="False">
+
+
+    <ContentPage.BindingContext>
+        <vm:UsersViewModel />
+    </ContentPage.BindingContext>
+    <StackLayout>
+        <!-- Create Button -->
+        <Button Text="＋ Create Workout"
+                FontSize="16"
+                BackgroundColor="#4CAF50"
+                TextColor="White"
+                CornerRadius="25"
+                Margin="15,10"
+                HeightRequest="50"
+                Command="{Binding CreateWorkoutCommand}" />
+        <ScrollView>
+            <CollectionView ItemsSource="{Binding Workouts}" SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Margin="10" Padding="15" CornerRadius="20" HasShadow="True" BorderColor="#E0E0E0">
+                            <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*,Auto">
+
+                                <!-- Date (Top Right) -->
+                                <Label Grid.Row="0" Grid.Column="1"
+                               Text="{Binding Date}"
+                               FontSize="12"
+                               TextColor="#9E9E9E"
+                               HorizontalOptions="End"
+                               VerticalOptions="Center"/>
+
+                                <!-- Name + Duration -->
+                                <StackLayout Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Spacing="10">
+                                    <Label Text="{Binding Name}" FontSize="18" FontAttributes="Bold" TextColor="#212121"/>
+                                    <Label Text="{Binding DurationMinutes, StringFormat='{0} min'}"
+                                   FontSize="14" TextColor="#4CAF50" VerticalOptions="Center"/>
+                                </StackLayout>
+
+                                <!-- Action Buttons -->
+                                <StackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
+                                    <Button Text="Edit"
+                                    FontSize="12"
+                                    BackgroundColor="#2196F3"
+                                    TextColor="White"
+                                    CornerRadius="15"
+                                    Padding="10,5"
+                                    Command="{Binding BindingContext.EditWorkoutCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                    CommandParameter="{Binding .}"/>
+
+                                    <Button Text="Delete"
+                                    FontSize="12"
+                                    BackgroundColor="#F44336"
+                                    TextColor="White"
+                                    CornerRadius="15"
+                                    Padding="10,5"
+                                    Command="{Binding BindingContext.DeleteWorkoutCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                    CommandParameter="{Binding .}"/>
+                                </StackLayout>
+
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
+
+    </StackLayout>
+
+
+</ContentPage>
